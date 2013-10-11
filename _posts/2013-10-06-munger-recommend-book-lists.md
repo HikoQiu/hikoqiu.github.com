@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ''
+title: '查理·芒格推荐书单'
 categories:
 - 兴趣娱乐
 tags: []
