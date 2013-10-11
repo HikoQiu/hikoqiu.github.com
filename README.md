@@ -1,3 +1,0 @@
-#Hiko.
-
-Just to blog.
