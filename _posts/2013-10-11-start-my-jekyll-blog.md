@@ -2,7 +2,7 @@
 layout: post
 title: "开始我的jekyll博客"
 description: ""
-category: "兴趣娱乐"
+category: "entertainment"
 tags: [jekyll, 博客]
 ---
 
