@@ -62,3 +62,10 @@ tags: [daily-thoughts, 挫折, 经验]
 
 如果你觉得有那些应该注意的，请你给我留言吧。
 
+---
+
+###Live and learn it.
+
+The day before yesterday evening, I came back to school 'ahead of time' after 8 pm. I feel dizzy all day long that day and cann't not work in my best condition, so I went back to school earlier than usual for more than one hour.
+
+I heard that my colleagues worked to 1 a.m. yesterday evening(the day I went back to school earlier than before.) for debugging a online-bug, which would affect gradescale users and make users feel bad experience with our company's product and lead to lost users.
