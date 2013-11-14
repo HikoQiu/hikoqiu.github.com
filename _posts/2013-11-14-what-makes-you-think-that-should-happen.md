@@ -43,4 +43,4 @@ tags: [daily-thoughts, 梦想]
 [来自Qzone](http://qzone.qq.com)
 ……
 
-勿忘初心！`
+勿忘初心！
