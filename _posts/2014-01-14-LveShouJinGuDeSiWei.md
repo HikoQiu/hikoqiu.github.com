@@ -1,6 +1,6 @@
 ---   
 layout: post    
-title: {name} - "略受禁锢的思维"    
+title: "略受禁锢的思维"    
 description: "程序员&思维"     
 category: "daily-thoughts"  
 tags: [daily-thoughts]   
