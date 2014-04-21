@@ -1,9 +1,9 @@
 --
-layout: post
-title: "阅读与旅行"
-description: "阅读与旅行，必须总有一样在路上"
-category: "daily-thoughts"
-tags: [daily-thoughts]
+layout: post  
+title: "阅读与旅行"  
+description: "阅读与旅行，必须总有一样在路上"  
+category: "daily-thoughts"  
+tags: [daily-thoughts]  
 ---
 
 #### 阅读与旅行，必须总有一样在路上。
