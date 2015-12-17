@@ -5,7 +5,7 @@ title: Hiko.im博客
 subtitle:   
 author: Hiko  
 category: default  
-tags:   
+tags: daily   
 ctime: 2015-12-18 01:49:32  
 lang: zh  
 
