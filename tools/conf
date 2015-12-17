@@ -1,0 +1,14 @@
+#!/bin/sh
+
+PHP=/usr/bin/php
+
+PATH_TOOL='./tools'
+PATH_LOG='./logs'
+PATH_POST_MD="./mds"
+PATH_MD_TPL='./tpls'
+PATH_HTML_TPL='./tpls'
+PATH_POST_HTML="./posts"
+PATH_ROOT="./"
+
+# the post created latest
+LATEST_FILE_NAME='latest.file.log'
