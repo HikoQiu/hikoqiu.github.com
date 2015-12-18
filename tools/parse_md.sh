@@ -23,10 +23,9 @@ do
         --help)                      help=yes                   ;;
 
 
-        --file=*)                    MD_FILENAME="$value"            ;;
-        --all)                       MD_ALL=yes           ;;
+        --file=*)                    MD_FILENAME="$value"   ;;
         --index*)                    index="$value"                   ;;
-        
+        --all)                       MD_ALL=yes           ;;
         *)
             echo "$0: error: invalid option \"$option\""
             exit 1
