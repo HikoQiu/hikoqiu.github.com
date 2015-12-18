@@ -11,7 +11,6 @@ index=yes
 MD_FILENAME=
 MD_ALL=no
 
-# assign value to vars
 for option
 do
     case "$option" in
@@ -20,12 +19,10 @@ do
     esac
 
     case "$option" in
-        --help)                      help=yes                   ;;
+        --help)                          help=yes                   ;;
 
-
-        --file=*)                    MD_FILENAME="$value"   ;;
-        --index*)                    index="$value"                   ;;
-        --all)                       MD_ALL=yes           ;;
+        --file=*)                      MD_FILENAME="$value"            ;;
+        --index=*)                     index="$value"         ;;
         *)
             echo "$0: error: invalid option \"$option\""
             exit 1
@@ -58,7 +55,9 @@ $PHP $PATH_TOOL/php/parse_md.php --file=$MD_FILENAME --all=$MD_ALL >> $logfile
 echo "--debug"
 cat $logfile
 
+
 if [ $index = yes ]; then
     . $PATH_TOOL/index.sh
     exit 1
 fi
+
