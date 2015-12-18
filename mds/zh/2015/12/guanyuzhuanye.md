@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: 关于专业  
+title: About Professional  
 subtitle:   
 author: Hiko  
 category: default  
