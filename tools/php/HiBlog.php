@@ -233,6 +233,7 @@ class HiBlog {
         $timeMapCon = [];
         $times = [];
         foreach($files as $index => $file) {
+            // parse title & title & tags
             $meta = $this->getMeta($file);
             $file = ltrim($file, './');
             $times[$index] = strtotime($meta['ctime']);
@@ -277,7 +278,8 @@ class HiBlog {
         return [
             'title' => $meta[0],
             'author' => $meta[1],
-            'ctime' => $meta[2]
+            'ctime' => $meta[2],
+            'tags' => $meta[3]
         ];
     }
 
