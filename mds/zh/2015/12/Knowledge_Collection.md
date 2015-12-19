@@ -42,6 +42,8 @@ lang: en
 
 [S4: Distributed Stream Computing Platform](http://cs.brown.edu/~debrabant/cis570-website/papers/s4.pdf)
 
+[# More Reading List...etc](http://www.cs.cmu.edu/~pavlo/courses/fall2013/reading-list.html)
+
 ###### Paxos "Trilogy"
 
 [Paxos made simple](http://www.cs.cmu.edu/~15-440/READINGS/paxos-made-simple.pdf)
