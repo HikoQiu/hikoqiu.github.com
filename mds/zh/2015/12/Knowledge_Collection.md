@@ -52,6 +52,10 @@ lang: en
 
 [Paxos made live](http://www.cs.cmu.edu/~15-440/READINGS/paxos-made-live.pdf), an engineering perspective.
 
+###### Consensus ALgorithm
+
+[The Raft Consensus Algorithm](https://raft.github.io/), equivalent to Paxos in fault-tolerance and performance.
+
 ###### Quorum mechanism
 
 [Weighted Voting for Replicated Data](http://www.cs.cmu.edu/~15-440/READINGS/gifford79.pdf)
