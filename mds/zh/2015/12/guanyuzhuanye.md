@@ -11,4 +11,4 @@ lang: zh
 
 ---
 
-专业，需要有所钻研。
+professional means ethusiasm, passion and effort.
