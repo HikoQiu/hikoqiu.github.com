@@ -127,7 +127,7 @@ class HiBlog {
         
         // copy tpl as basic content
         $content = file_get_contents($this->getTplFile());
-        $content = $this->_replaceBasicInfo($content, $title, $stitle, $author);
+        $content = $this->_replaceBasicInfo($content, str_replace('.', ' ', $title), str_replace(',', ' ', $stitle), $author);
         return file_put_contents($this->getPath(), $content);
     }
     
