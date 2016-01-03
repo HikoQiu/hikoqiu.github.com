@@ -17,6 +17,21 @@ Maybe here're many gramma mistakes or misspellings in every post I wrote, coz I'
 
 ### Which approach/way
 
-I'm not seeking for helps from others about my life/fate questions, actually I enjoy them a lot which bring me troubles continously.
+I'm not seeking for helps from others about my life questions, actually I enjoy them a lot which bring me troubles continously.
 
+I always think about what the meaning of life is like other young guys do. I can almost list a batch of items which are considered as noble and high ideals. 
 
+For examples, do something big:
+
+ - Run a company/org for changing the world (in other words, change/improve users' life quality)
+ 
+ - Do something meaningful to change people's perspectives, like [`TED`](http://ted.com) does. In this regard, I tried to build a website named [`innoGuy`](http://innoGuy.com) to spread different thoughts and make them connected to generate great reactions between users who is eager to accept different points of view and communicate with people who are engaged in the same pursuit.(ps: *innoGuy* has gotten started not long ago, and It's under construction now to gather more thoughtful essays/articles. Non-profit website)
+ 
+ - Become a expert in industry I devote to.
+ 
+ - Join a company with the same vision as I yearm for.
+ 
+ - Help people in bad situations (Yet, I know that I need to be strong enough befor helping others)
+ 
+ - ... etc
+ 
