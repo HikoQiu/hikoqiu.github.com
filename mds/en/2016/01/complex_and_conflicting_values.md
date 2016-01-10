@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: Complex and conflicting value systems  
+title: Complex and conflicting values
 subtitle:   
 author: Hiko  
 category: default  
