@@ -114,7 +114,7 @@ lang: zh
  
  比如创建项目: MyJni
  
-  - **配置jni & Android.mk**
+ - **配置jni & Android.mk**
   
     i, 在项目的根目录创建`jni`目录，比如：MyJni/jni  
     ii, 在刚创建的jni目录下创建`Android.mk`文件，比如：MyJni/jni/Android.mk  
