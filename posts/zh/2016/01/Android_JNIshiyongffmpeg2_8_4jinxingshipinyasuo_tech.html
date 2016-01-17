@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Android.JNI使用ffmpeg2.8.4进行视频压缩 - Hiko.im</title>
+    <!--HiBlog-Android.JNI使用ffmpeg2.8.4进行视频压缩`Hiko`2016-01-17 18:52:39`Android,NDK,JNI,ffmpeg,video compression-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resrouce/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+        <h1 class="project-name">Android.JNI使用ffmpeg2.8.4进行视频压缩</h1>
+        <h2 class="project-tagline">by Hiko / Android,NDK,JNI,ffmpeg,video compression</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h3>一，步骤概览</h3>
+
+<ul>
+<li>1, 准备开发环境和工具；其中包括：Android开发环境、安装NDK。</li>
+<li>2, 下载并解压ffmpeg源代码</li>
+<li>3, 编译ffmpeg源码，生成类文件(*.so)供后面Andoid项目使用</li>
+<li>4, 创建Android项目(MyJni)并配置JNI开发的相关文件</li>
+<li>5, 引入第3步生成的ffmpeg相关的类文件(*.so)</li>
+<li>6, Java调用JNI的C代码(C代码调用ffmpeg)进行视频压缩  </li>
+</ul>
+
+<h3>二，步骤详细</h3>
+
+<p>本次试验的开发环境和相关版本：</p>
+
+<ul>
+<li>Mac OS X YOSEMITE 10.10.5</li>
+<li>Eclipse Mars.1 Release (4.5.1)</li>
+<li>cc(gcc) 版本(cc -v)<br />
+Apple LLVM version 7.0.0 (clang-700.1.76)<br />
+Target: x86_64-apple-darwin14.5.0<br />
+Thread model: posix  </li>
+<li>make 版本 (make -v)<br />
+GNU Make 3.81</li>
+<li>ffmpeg 2.8.4</li>
+<li>android-ndk-r10e-darwin-x86_64.bin</li>
+</ul>
+
+<h5>1， 准备相关的环境和工具；</h5>
+
+<ul>
+<li><strong>Android 开发环境(JDK)</strong></li>
+</ul>
+
+<p>配置Android开发环境，以及安装必要的JDK / <a href="http://developer.android.com/sdk/index.html">JDK 下载地址</a>。Android开发环境具体操作请Google 自行解决。</p>
+
+<ul>
+<li><strong>NDK</strong></li>
+</ul>
+
+<p>下载并解压NDK，具体参考Android Developers / <a href="http://developer.android.com/tools/sdk/ndk/index.html">Android NDK 下载地址</a>。</p>
+
+<p>解压后将得到一个NDK的解压目录，比如我的是：/Users/hikoqiu/packages/android-ndk-r10e  </p>
+
+<p>备注： 后面将使用<code>$NDK</code>来代表NDK的目录， 比如：$NDK/ndk-build 则表示/Users/hikoqiu/packages/android-ndk-r10e/ndk-build</p>
+
+<h5>2， 准备ffmpeg源码</h5>
+
+<ul>
+<li>ffmpeg的源码可以从ffmpeg官网下载 / <a href="http://www.ffmpeg.org/download.html">ffmpeg官网</a></li>
+<li>解压下载的文件<br />
+我使用的是 ffmpeg-2.8.4.tar.bz2<br />
+解压： <strong>tar -xf ffmpeg-2.8.4.tar.bz2</strong></li>
+</ul>
+
+<p>将解压后的源码文件夹复制到$NDK/sources目录，此时$NDK/sources目录下就有ffmpeg-2.8.4这个源码文件夹($NDK/sources/ffmpeg-2.8.4).  </p>
+
+<p><em>为了目录好看，我把ffmpeg-2.8.4改名为ffmpeg</em></p>
+
+<h5>3, 编译ffmpeg源代码</h5>
+
+<ul>
+<li><p><strong>修改源码中的configure文件</strong></p>
+
+<p>网上的说法是：为了让ffmpeg源码能顺利编译并用于android，需要修改configure文件的几个参数。</p>
+
+<p>将#NDK/sources/ffmpeg/configure中的以下4个变量：</p></li>
+</ul>
+
+<blockquote>
+  <p>SLIBNAME<em>WITH</em>MAJOR='$(SLIBNAME).$(LIBMAJOR)'<br />
+  LIB<em>INSTALL</em>EXTRA<em>CMD='$$(RANLIB) "$(LIBDIR)/$(LIBNAME)"'<br />
+  SLIB</em>INSTALL<em>NAME='$(SLIBNAME</em>WITH<em>VERSION)'<br />
+  SLIB</em>INSTALL<em>LINKS='$(SLIBNAME</em>WITH_MAJOR) $(SLIBNAME)'  </p>
+</blockquote>
+
+<p>修改成:</p>
+
+<blockquote>
+  <p>SLIBNAME<em>WITH</em>MAJOR='$(SLIBPREF)$(FULLNAME)-$(LIBMAJOR)$(SLIBSUF)'<br />
+  LIB<em>INSTALL</em>EXTRA<em>CMD='$$(RANLIB) "$(LIBDIR)/$(LIBNAME)"'<br />
+  SLIB</em>INSTALL<em>NAME='$(SLIBNAME</em>WITH<em>MAJOR)'<br />
+  SLIB</em>INSTALL_LINKS='$(SLIBNAME)'  </p>
+</blockquote>
+
+<ul>
+<li><p><strong>新建shell文件: build_ffmpeg.sh</strong>  </p>
+
+<p>在<code>$NDK/sources/ffmpeg</code>目录下新建build_ffmpeg.sh文件，文件具体内容请参考：<a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/scripts/build_ffmpeg.sh">build_ffmpeg.sh</a>.  </p>
+
+<p><em>因为我使用Markdown写这篇文，格式不好控制，所以这里就不贴出来代码，请直接点连接查看。</em></p>
+
+<p><strong>注意</strong>：build_ffmpeg.sh中三个变量NDK、SYSROOT、TOOLCHAIN的需要根据你具体的NDK的解压路径进行配置。</p></li>
+<li><p><strong>编译ffmpeg</strong></p>
+
+<p>先给build_ffmpeg.sh加上可执行的权限，再执行。</p>
+
+<blockquote>
+  <p>chmod a+x build<em>ffmpeg.sh<br />
+  ./build</em>ffmpeg.sh</p>
+</blockquote></li>
+</ul>
+
+<p>备注：build_ffmpeg.sh文件中，已经./configure 配置了一些相关的配置、之后make、make install.</p>
+
+<p>顺利执行完之后，将会在$NDK/sources/ffmpeg/android/arm/lib下看到多个.so文件，在lib目录下还有多个软链文件。</p>
+
+<ul>
+<li><strong>配置Android.mk, 让编程的.so文件能供项目使用</strong></li>
+</ul>
+
+<p>在$NDK/sources/ffmpeg/android/arm目录下创建Android.mk文件，文件内容请参考: <a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/scripts/arm/Android.mk">Android.mk</a>  </p>
+
+<p>备注：配置在Android.mk的相关的.so类文件，将会在后面的操作<code>$NDK/ndk-build</code>中，复制到项目的libs里面。</p>
+
+<h5>4， 创建实验的Android项目并配置JNI</h5>
+
+<ul>
+<li><p><strong>创建Android项目</strong></p>
+
+<p>比如创建项目: MyJni</p>
+
+<ul>
+<li><strong>配置jni &amp; Android.mk</strong></li>
+</ul>
+
+<p>i, 在项目的根目录创建<code>jni</code>目录，比如：MyJni/jni<br />
+ii, 在刚创建的jni目录下创建<code>Android.mk</code>文件，比如：MyJni/jni/Android.mk  </p>
+
+<p>Android.mk具体内容，请参考：<a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/scripts/jni/Android.mk">Android.mk</a>  </p>
+
+<p>备注：Android.mk中多个变量的解释：<br />
+     LOCAL<em>MODULE // 编译后的文件名<br />
+     LOCAL</em>C<em>INCLUDE // 编译所依赖的相关ffmpeg的头文件，具体路径要根据自己的文件路径<br />
+     LOCAL</em>SRC_FILES // 编译的文件</p>
+
+<p><strong>注意：</strong> 因为我这里直接将原来的ffmpeg/目录下的几个文件也拷贝过来( 项目的jni目录结构见：<a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/tree/master/jni">JNI<em>INVOKE</em>FFMPEG jni目录</a> )，然后再在jni的C代码中自定义了一个方法直接调用原来ffmpeg.c中的main()方法，这样，我就能直接从Java中传一个命令进行执行ffmpeg的操作。比如：ffmpeg -y -i /storage/emulated/0/appwonderroot/v/raw/vedio-1586478489.mp4 -strict experimental -r 30 -vcodec mpeg4 -b 50000 /storage/emulated/0/appwonderroot/v/cps/abc.mp4  </p>
+
+<p>如果你不想跟我一样的调用方式，像独立去操作每个类暴露的方法，可以不用像上面的Android.mk那样配置。</p></li>
+</ul>
+
+<h5>5, 引用.so文件，并在Java中调用</h5>
+
+<p>这部分更多是JNI的开发，可以去参考其他JNI的开发资料。</p>
+
+<p>这里使用MyJni项目来介绍。</p>
+
+<ul>
+<li><p>创建一个类，Loader.java ( 参考： <a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/src/com/example/myjni/Loader.java">Loader.java</a> ).</p></li>
+<li><p>生成Loader.java的JNI头部文件。  </p>
+
+<p>进入MyJni/bin/classes目录，使用 <code>javah -classpath . -jni com.example.myjni.Loader</code>生成JNI的头部文件，并把生成的*.h文件移到MyJni/jni目录下，其实就是个C头部文件，如：<a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/jni/com_example_myjni_Loader.h">com<em>example</em>myjni_Loader.h</a></p></li>
+<li><p>编译自定义的JNI方法和ffmpeg的类文件</p>
+
+<p>i. 进入项目MyJni<br />
+ii. 执行$NDK/ndk-build</p>
+
+<p>这个时候，顺利的话，会在MyJni的libs下生成多个ffmpeg的相关的类文件(.so).</p></li>
+</ul>
+
+<h5>6，调用</h5>
+
+<p>在Loader.java中调用，具体请参考 <a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/src/com/example/myjni/Loader.java">Loader.java</a></p>
+
+<p>一切顺利的话，将会看到压缩之后的视频文件，20+M的视频文件，只剩下3M，而且还不是很模糊。</p>
+
+<h3>三，参考资料</h3>
+
+<p>如果上面你看不懂或者操作失败，那一定是我介绍得不清楚。这里有更多可以参考的资料，这是我在做这个实验的过程中参考的内容。</p>
+
+<p>在做这个实验的时候，参考了很多很多内容，从普通的博客到多个的stackoverflow的内容，试了一天多，中间遇到了接近无数个问题，最终顺利弄出来。文件的所有代码以及我的测试项目的文件都已经放在我的github上，见：<a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG">JNI<em>INVOKE</em>FFMPEG</a> .</p>
+
+<p>我平时是一个服务端+后端工程师，所以玩Android都是业余时间试试而已，所以优化之类的工作需要靠各位Android的工程师了。</p>
+
+<ul>
+<li><a href="http://ffmpeg-android.blogspot.com/">Integrate FFMPEG library in Android</a> // 需要梯子，这篇很有引导性，建议先看这篇  </li>
+<li><p><a href="http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/">Compile FFmpeg for Android</a>  // 在自定义的jni C代码中调用ffmpeg.c中的main()方法的主意，就是从这篇文中来的。</p>
+
+<ul>
+<li><a href="http://blog.csdn.net/gobitan/article/details/22750719"> FFmpeg的Android平台移植—编译篇</a></li>
+</ul></li>
+</ul>
+</div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+
+            <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>.</span>
+        </footer>
+
+    </section>
+
+  </body>
+</html>
