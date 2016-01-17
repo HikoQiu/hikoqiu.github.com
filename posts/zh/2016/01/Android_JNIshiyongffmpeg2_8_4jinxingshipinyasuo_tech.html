@@ -45,7 +45,7 @@ GNU Make 3.81</li>
 <li>android-ndk-r10e-darwin-x86_64.bin</li>
 </ul>
 
-<h5>1， 准备相关的环境和工具；</h5>
+<h4>1， 准备相关的环境和工具；</h4>
 
 <ul>
 <li><strong>Android 开发环境(JDK)</strong></li>
@@ -63,7 +63,7 @@ GNU Make 3.81</li>
 
 <p>备注： 后面将使用<code>$NDK</code>来代表NDK的目录， 比如：$NDK/ndk-build 则表示/Users/hikoqiu/packages/android-ndk-r10e/ndk-build</p>
 
-<h5>2， 准备ffmpeg源码</h5>
+<h4>2， 准备ffmpeg源码</h4>
 
 <ul>
 <li>ffmpeg的源码可以从ffmpeg官网下载 / <a href="http://www.ffmpeg.org/download.html">ffmpeg官网</a></li>
@@ -76,7 +76,7 @@ GNU Make 3.81</li>
 
 <p><em>为了目录好看，我把ffmpeg-2.8.4改名为ffmpeg</em></p>
 
-<h5>3, 编译ffmpeg源代码</h5>
+<h4>3, 编译ffmpeg源代码</h4>
 
 <ul>
 <li><p><strong>修改源码中的configure文件</strong></p>
@@ -132,7 +132,7 @@ GNU Make 3.81</li>
 
 <p>备注：配置在Android.mk的相关的.so类文件，将会在后面的操作<code>$NDK/ndk-build</code>中，复制到项目的libs里面。</p>
 
-<h5>4， 创建实验的Android项目并配置JNI</h5>
+<h4>4， 创建实验的Android项目并配置JNI</h4>
 
 <ul>
 <li><p><strong>创建Android项目</strong></p>
@@ -158,7 +158,7 @@ ii, 在刚创建的jni目录下创建<code>Android.mk</code>文件，比如：My
 <p>如果你不想跟我一样的调用方式，像独立去操作每个类暴露的方法，可以不用像上面的Android.mk那样配置。</p></li>
 </ul>
 
-<h5>5, 引用.so文件，并在Java中调用</h5>
+<h4>5, 引用.so文件，并在Java中调用</h4>
 
 <p>这部分更多是JNI的开发，可以去参考其他JNI的开发资料。</p>
 
@@ -177,7 +177,7 @@ ii. 执行$NDK/ndk-build</p>
 <p>这个时候，顺利的话，会在MyJni的libs下生成多个ffmpeg的相关的类文件(.so).</p></li>
 </ul>
 
-<h5>6，调用</h5>
+<h4>6，调用</h4>
 
 <p>在Loader.java中调用，具体请参考 <a href="https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/src/com/example/myjni/Loader.java">Loader.java</a></p>
 
@@ -193,11 +193,8 @@ ii. 执行$NDK/ndk-build</p>
 
 <ul>
 <li><a href="http://ffmpeg-android.blogspot.com/">Integrate FFMPEG library in Android</a> // 需要梯子，这篇很有引导性，建议先看这篇  </li>
-<li><p><a href="http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/">Compile FFmpeg for Android</a>  // 在自定义的jni C代码中调用ffmpeg.c中的main()方法的主意，就是从这篇文中来的。</p>
-
-<ul>
+<li><a href="http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/">Compile FFmpeg for Android</a>  // 在自定义的jni C代码中调用ffmpeg.c中的main()方法的主意，就是从这篇文中来的。  </li>
 <li><a href="http://blog.csdn.net/gobitan/article/details/22750719"> FFmpeg的Android平台移植—编译篇</a></li>
-</ul></li>
 </ul>
 </div>
 

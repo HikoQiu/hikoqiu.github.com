@@ -35,7 +35,7 @@ lang: zh
  - ffmpeg 2.8.4
  - android-ndk-r10e-darwin-x86_64.bin
  
-##### 1， 准备相关的环境和工具；
+#### 1， 准备相关的环境和工具；
 
  - **Android 开发环境(JDK)**
 
@@ -49,7 +49,7 @@ lang: zh
 
 备注： 后面将使用`$NDK`来代表NDK的目录， 比如：$NDK/ndk-build 则表示/Users/hikoqiu/packages/android-ndk-r10e/ndk-build
 
-##### 2， 准备ffmpeg源码
+#### 2， 准备ffmpeg源码
 
  - ffmpeg的源码可以从ffmpeg官网下载 / [ffmpeg官网](http://www.ffmpeg.org/download.html)
  - 解压下载的文件  
@@ -60,7 +60,7 @@ lang: zh
 
 *为了目录好看，我把ffmpeg-2.8.4改名为ffmpeg*
 
-##### 3, 编译ffmpeg源代码
+#### 3, 编译ffmpeg源代码
 
  - **修改源码中的configure文件**
  
@@ -108,7 +108,7 @@ lang: zh
 
 备注：配置在Android.mk的相关的.so类文件，将会在后面的操作`$NDK/ndk-build`中，复制到项目的libs里面。
 
-##### 4， 创建实验的Android项目并配置JNI
+#### 4， 创建实验的Android项目并配置JNI
 
  - **创建Android项目**
  
@@ -130,7 +130,7 @@ lang: zh
     
     如果你不想跟我一样的调用方式，像独立去操作每个类暴露的方法，可以不用像上面的Android.mk那样配置。
     
-##### 5, 引用.so文件，并在Java中调用
+#### 5, 引用.so文件，并在Java中调用
 
 这部分更多是JNI的开发，可以去参考其他JNI的开发资料。
 
@@ -150,7 +150,7 @@ lang: zh
    
    这个时候，顺利的话，会在MyJni的libs下生成多个ffmpeg的相关的类文件(.so).
    
-##### 6，调用
+#### 6，调用
 
 在Loader.java中调用，具体请参考 [Loader.java](https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/src/com/example/myjni/Loader.java)
 
@@ -167,7 +167,6 @@ lang: zh
 我平时是一个服务端+后端工程师，所以玩Android都是业余时间试试而已，所以优化之类的工作需要靠各位Android的工程师了。
 
  - [Integrate FFMPEG library in Android](http://ffmpeg-android.blogspot.com/) // 需要梯子，这篇很有引导性，建议先看这篇  
- - [Compile FFmpeg for Android](http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/)  // 在自定义的jni C代码中调用ffmpeg.c中的main()方法的主意，就是从这篇文中来的。
- 
-  - [ FFmpeg的Android平台移植—编译篇](http://blog.csdn.net/gobitan/article/details/22750719)
+ - [Compile FFmpeg for Android](http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/)  // 在自定义的jni C代码中调用ffmpeg.c中的main()方法的主意，就是从这篇文中来的。  
+ - [ FFmpeg的Android平台移植—编译篇](http://blog.csdn.net/gobitan/article/details/22750719)
    
