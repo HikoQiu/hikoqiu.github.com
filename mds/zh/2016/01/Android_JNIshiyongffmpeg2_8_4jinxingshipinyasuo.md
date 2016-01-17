@@ -97,12 +97,12 @@ lang: zh
    > chmod a+x build_ffmpeg.sh  
    > ./build_ffmpeg.sh
 
-备注：build_ffmpeg.sh文件中，已经./configure 配置了一些相关的配置、之后make、make install.
+备注：build_ffmpeg.sh文件中配置了./configure的一些相关参数, 然后make、make install.
 
 顺利执行完之后，将会在$NDK/sources/ffmpeg/android/arm/lib下看到多个.so文件，在lib目录下还有多个软链文件。
 
 
- - **配置Android.mk, 让编程的.so文件能供项目使用**
+ - **配置Android.mk, 让编译的.so文件能供项目使用**
 
 在$NDK/sources/ffmpeg/android/arm目录下创建Android.mk文件，文件内容请参考: [Android.mk](https://github.com/HikoQiu/JNI_INVOKE_FFMPEG/blob/master/scripts/arm/Android.mk)  
 
@@ -162,7 +162,7 @@ lang: zh
 
 如果上面你看不懂或者操作失败，那一定是我介绍得不清楚。这里有更多可以参考的资料，这是我在做这个实验的过程中参考的内容。
 
-在做这个实验的时候，参考了很多很多内容，从普通的博客到多个的stackoverflow的内容，试了一天多，中间遇到了接近无数个问题，最终顺利弄出来。文件的所有代码以及我的测试项目的文件都已经放在我的github上，见：[JNI_INVOKE_FFMPEG](https://github.com/HikoQiu/JNI_INVOKE_FFMPEG) .
+在做这个实验的时候，参考了很多很多内容，从普通的博客到多个的stackoverflow的内容，中间遇到了接近无数个问题，最终顺利弄出来。文件的所有代码以及我的测试项目的文件都已经放在我的github上，见：[JNI_INVOKE_FFMPEG](https://github.com/HikoQiu/JNI_INVOKE_FFMPEG) .
 
 我平时是一个服务端+后端工程师，所以玩Android都是业余时间试试而已，所以优化之类的工作需要靠各位Android的工程师了。
 
