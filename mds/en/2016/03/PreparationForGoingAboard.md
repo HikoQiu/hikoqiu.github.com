@@ -13,16 +13,13 @@ lang: en
 
 ### Summary
 
-i. **Language**  
-i. **Technology skill**  
-i. **Good Luck**
+ -  **Language**  
+ -  **Technology skill**  
+ -  **Good Luck**
 
 #### Language
 
-````
-	A new way of thinking.
-	
-````
+    A new way of thinking.
 
 1. Professional English.
 2. Everyday language.
@@ -30,10 +27,7 @@ i. **Good Luck**
 
 #### Technology skill 
 
-````
-	Just do persue what I like.
-
-````
+    Persue what I like.
 
 1. Data structures.
 2. Algorithms.
