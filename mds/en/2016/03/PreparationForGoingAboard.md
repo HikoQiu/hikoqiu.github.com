@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: PreparationForGoingAboard  
+title: Preparation for going aboard  
 subtitle:   
 author: Hiko  
 category: default  
@@ -42,7 +42,7 @@ i. **Good Luck**
 5. Network like TCP/IP details.
 6. Unix/Linux C system calls.
 7. Assisting script languages like: Shell/Python/Lua/PHP.
-8. Compiled language for high performance/large scale system, like: C/Go/Java/Erlang.
+8. Compiled language for high performance/large scale system, like: C/C++/Go/Java/Erlang.
 9. Computer architecture.
 
 **Standards** 
