@@ -1,12 +1,12 @@
 ---
 
 layout: post  
-title: [Let’s Go]浅析goroutine和线程、进程的区别  
+title: [Let's Go]浅析goroutine和线程、进程的区别  
 subtitle:   
 author: Hiko  
 category: tech  
 tags: go,goroutine,thread,process  
-ctime: 2016-03-17 23:39:58  
+ctime: 2016-03-13 13:09:58  
 lang: zh  
 
 ---

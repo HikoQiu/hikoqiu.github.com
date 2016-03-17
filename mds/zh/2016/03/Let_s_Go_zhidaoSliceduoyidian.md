@@ -6,7 +6,7 @@ subtitle:
 author: Hiko  
 category: tech  
 tags: go,slice,array,value copy  
-ctime: 2016-03-17 23:51:11  
+ctime: 2016-03-14 20:51:11  
 lang: zh  
 
 ---

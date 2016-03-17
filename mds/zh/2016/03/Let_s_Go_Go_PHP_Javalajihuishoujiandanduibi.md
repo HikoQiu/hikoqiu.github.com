@@ -6,7 +6,7 @@ subtitle:
 author: Hiko  
 category: tech  
 tags: go,GC,php,java  
-ctime: 2016-03-17 23:57:37  
+ctime: 2016-03-18 00:06:37  
 lang: zh  
 
 ---
