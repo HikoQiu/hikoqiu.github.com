@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: In C bus error/总线错误  
+title: [In C]bus error/总线错误  
 subtitle:   
 author: Hiko  
 category: tech  
@@ -15,9 +15,10 @@ lang: zh
 
 
 ````
+
 	char s1[10] = "string";
 	char s2[10];
-	//	s2 = "string"; // cant't assign to char array
+	//	s2 = "string"; // cant't assign to char array  
 	s2[0] = 'b';
 
 	char *s3 = "string";
