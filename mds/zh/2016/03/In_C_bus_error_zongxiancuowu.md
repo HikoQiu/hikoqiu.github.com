@@ -31,4 +31,20 @@ lang: zh
 
 #### 原因
 
-... 待补充 ...
+Quote from stackoverflow:
+
+````
+Bus errors are rare nowadays on x86 and occur when your processor cannot even attempt the memory access requested, typically:
+
+ - using a processor instruction with an address that does not satisfy its alignment requirements.
+Segmentation faults occur when accessing memory which does not belong to your process, they are very common and are typically the result of:
+
+ - using a pointer to something that was deallocated.
+ - using an uninitialized hence bogus pointer.
+ - using a null pointer.
+ - overflowing a buffer.
+PS: To be more precise this is not manipulating the pointer itself that will cause issues, it's accessing the memory it points to (dereferencing).
+
+[What is a bus error?](http://stackoverflow.com/a/212585/2398826)
+````
+
