@@ -307,7 +307,7 @@ class HiBlog {
         foreach($categories as $c) {
             foreach($langs as $l) {
                 $name = $headerLabels["{$c}_{$l}"];
-                $slogan = '';
+                $slogan = strtoupper($c);
                 $datas["{$c}_{$l}"] = [ // e.g: tech_en
                     'filename' => "{$c}_{$l}.html",
                     'tpl' => "index_tpl_{$l}.html",

@@ -1,18 +1,18 @@
 #!/bin/sh
 
 ## 博客配置
-BLOG_NAME="异乡海子 | Hiko.im"
-BLOG_SLOGAN="闲庭雅苑"
+BLOG_NAME="Hiko.im"
+BLOG_SLOGAN="Hello, World."
 BLOG_NAME_ZH="异乡海子 | Hiko.im"
 BLOG_SLOGAN_ZH="闲庭雅苑"
 BLOG_NAME_EN="Hiko's Blog | Hiko.im"
-BLOG_SLOGAN_EN="yep, a quiet space."
+BLOG_SLOGAN_EN="Yep, a quiet space."
 
 DEFAULT_AUTHOR=Hiko
 
 # 导航配置
 HEADER_NAV_ALL='全部/All:/,中文版:/index_zh.html,English:index_en.html'
-HEADER_NAV_ZH='首页:/index_zh.html,技术:/tech_zh.html,随笔:/daily_zh.html,关于:/about_zh.html'
+HEADER_NAV_ZH='首页:/index_zh.html,编程:/tech_zh.html,随笔:/daily_zh.html,关于:/about_zh.html'
 HEADER_NAV_EN='Home:/index_en.html,Programming:/tech_en.html,Daily Thoughts:/daily_en.html,About Me:/about_en.html'
 
 # 分类, 与HEADER_NAV对应 # 以空格分隔, .会被替换成空格

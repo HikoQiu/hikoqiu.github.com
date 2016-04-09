@@ -73,6 +73,10 @@ do
             exit 1
             ;;
 
+        --all)
+            FILENAME="all"
+            ;;
+
         --t=*)
             TITLE="$value";
             ;;
