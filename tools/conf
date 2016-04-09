@@ -17,7 +17,7 @@ HEADER_NAV_EN='Home:/index_en.html,Programming:/tech_en.html,Daily Thoughts:/dai
 
 # 分类, 与HEADER_NAV对应 # 以空格分隔, .会被替换成空格
 CATEGORIES="tech daily"
-CATEGORIES_LABELS_ZH="技术 随笔"
+CATEGORIES_LABELS_ZH="编程 随笔"
 CATEGORIES_LABELS_EN="Programing Daily.Thoughts"
 LANGS="en zh"
 
