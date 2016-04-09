@@ -4,7 +4,7 @@ layout: post
 title: The Winter Solstice Of 2015  
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags: the winter solstice  
 ctime: 2015-12-21 15:39:29  
 lang: en  

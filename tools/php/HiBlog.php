@@ -163,10 +163,12 @@ class HiBlog {
         
         return $content;
     }
-    
+
     /**
      * Parse post's md file into html file
-     * @param string $filename
+     * @param $filename
+     * @return string
+     * @throws Exception
      */
     public function parsePostMd($filename) {
         $content = file_get_contents($filename);
@@ -174,7 +176,7 @@ class HiBlog {
         // 1.1 header & body of the post
         $data = explode('---', $content);
         if(count($data) <= 2) {
-            throw new Exception('Invalid post md content');
+            throw new Exception('[-] Error: 无法解析文章: '.$filename);
         }
         
         $header = explode("\n", $data[1]);
@@ -199,12 +201,19 @@ class HiBlog {
             '{$author}' => $arrHeader['author'],
             '{$ctime}' => $arrHeader['ctime'],
             '{$tags}' => $arrHeader['tags'],
+            '{$category}' => $arrHeader['category'],
+            '{$lang}' => $arrHeader['lang'],
             '{$body}' => $body
         ];
-        $tpl = $this->getDealtTplCnt();
-        foreach($repData as $key => $val) {
-            $tpl = str_replace($key, $val, $tpl);
+
+        // 根据文章类型设置模板
+        if($arrHeader['lang'] == 'en') {
+            $this->setTplFile(PATH_HTML_TPL.'/post_tpl_en.html');
+        }else {
+            $this->setTplFile(PATH_HTML_TPL.'/post_tpl_zh.html');
         }
+        $tpl = $this->getDealtTplCnt();
+        $tpl = str_replace(array_keys($repData), array_values($repData), $tpl);
         
         $ctime = $arrHeader['ctime'];
         $year = date('Y', strtotime($ctime));
@@ -224,55 +233,139 @@ class HiBlog {
         file_put_contents($file, $tpl);
         return $file;
     }
-    
+
     /**
      * create index to index.html
+     * @param $path
+     * @return array
+     * @throws Exception
      */
     public function index($path) {
         if(!is_dir($path)) {
-            throw new Exception("Path '{$path}' for index is not dir.");
+            throw new Exception("[-] Error: 路径 '{$path}' 不是文件夹!");
         }
         
         // through the dir to list all html files
         $files = $this->dirFiles($path);
         if(empty($files)) {
-            // @todo ..
+            throw new Exception("[-] Error: 暂无文章!");
         }
         
-        $timeMapCon = [];
-        $times = [];
+        $timeMapTitles = [];
+        $timesMapMeta = [];
         foreach($files as $index => $file) {
-            // parse title & title & tags
+            // 构造markdown的语法
             $meta = $this->getMeta($file);
             $file = ltrim($file, './');
-            $times[$index] = strtotime($meta['ctime']);
-            $ctime = date('Y/m/d', $times[$index]);
-            $line = "{$ctime} &raquo; [{$meta['title']}]({$file})  \r\n";
-            $timeMapCon[$times[$index]] = $line;
+            $datetime = date('Y/m/d', strtotime($meta['ctime']));
+            $title = "{$datetime} &raquo; [{$meta['title']}]({$file})  \r\n";
+            $timeMapTitles[$meta['ctime']] = $title;
+            $timesMapMeta[$meta['ctime']] = $meta;
         }
-        
-        // reverse order by ctime
-        rsort($times);
-        $content = '';
-        $lastMonth = '';
-        foreach($times  as $t) {
-            $month = date('Y/m', $t);
-            if($lastMonth!= $month) {
-                $content .= "### {$month}  \r\n";
+
+        return $this->genIndexes($timeMapTitles, $timesMapMeta);
+    }
+
+    private function genIndexes(&$timeMapTitles, &$timeMapMeta) {
+        krsort($timeMapTitles);
+
+        $categories = explode(' ', CATEGORIES);
+        $langs = explode(' ', LANGS);
+
+        // 索引页顶部标题
+        $headerLabels = [];
+        $consts = get_defined_constants();
+        foreach($categories as $i => $c) {
+            foreach($langs as $l) {
+                $constKey = strtoupper('CATEGORIES_LABELS_'.$l);
+                $arrCatLabels = explode(' ', $consts[$constKey]);
+                $headerLabels[$c.'_'.$l] = str_replace('.', ' ', $arrCatLabels[$i]);
             }
-            
-            $content .= $timeMapCon[$t];
-            $lastMonth = $month;
         }
-        
-        $content = Markdown::defaultTransform($content);
-        $tpl = $this->getDealtTplCnt();
-        $content = str_replace(
-            ['{$content}', '{$blogName}', '{$blogSlogan}'],
-            [$content, BLOG_NAME, BLOG_SLOGAN],
-            $tpl);
-        file_put_contents(PATH_ROOT.'/index.html', $content);
-        return $files;
+
+        // 需要生成索引的文件
+        $datas = [
+            'all' => [
+                'filename' => 'index.html',
+                'tpl' => 'index_tpl.html',
+                'name' => BLOG_NAME,
+                'slogan' => BLOG_SLOGAN,
+                'cnt' => '',
+            ],
+        ];
+        foreach($langs as $l) {
+            $name = $consts[strtoupper('BLOG_NAME_'.$l)];
+            $slogan = $consts[strtoupper('BLOG_SLOGAN_'.$l)];
+            $datas[$l] = [ // e.g: en
+                'filename' => "index_{$l}.html",
+                'tpl' => "index_tpl_{$l}.html",
+                'name' => $name,
+                'slogan' => $slogan,
+                'cnt' => '',
+            ];
+        }
+        foreach($categories as $c) {
+            foreach($langs as $l) {
+                $name = $headerLabels["{$c}_{$l}"];
+                $slogan = '';
+                $datas["{$c}_{$l}"] = [ // e.g: tech_en
+                    'filename' => "{$c}_{$l}.html",
+                    'tpl' => "index_tpl_{$l}.html",
+                    'name' => $name,
+                    'slogan' => $slogan,
+                    'cnt' => '',
+                ];
+            }
+        }
+
+        // 生成索引文件
+        $arrLastMonth = array_flip(array_keys($datas));
+        foreach($timeMapTitles as $t => $title) {
+            $month = date('Y/m', strtotime($t));
+
+            // all
+            if($arrLastMonth['all'] != $month) {
+                $datas['all']['cnt'] .= "### {$month}  \r\n";
+                $arrLastMonth['all'] = $month;
+            }
+            $datas['all']['cnt'] .= $title;
+
+            // en_all & zh_all
+            $meta = $timeMapMeta[$t];
+            $lang =$meta['lang'];
+            if(!in_array($lang, $langs)) {
+                throw new Exception("[-] Error: 语言错误 {$lang}: $title");
+            }
+            if($arrLastMonth[$lang] != $month) {
+                $datas[$lang]['cnt'] .= "### {$month}  \r\n";
+                $arrLastMonth[$lang] = $month;
+            }
+            $datas[$lang]['cnt'] .= $title;
+
+            // category_lang
+            $categoryLang = $meta['category'].'_'.$lang;
+            if($arrLastMonth[$categoryLang] != $month) {
+                $datas[$categoryLang]['cnt'] .= "### {$month}  \r\n";
+                $arrLastMonth[$categoryLang] = $month;
+            }
+            $datas[$categoryLang]['cnt'] .= $title;
+        }
+
+        foreach($datas as $item) {
+            $filename = $item['filename'];
+            $cnt = Markdown::defaultTransform($item['cnt']);
+            $this->setTplFile(PATH_HTML_TPL.'/'.$item['tpl']);
+            $tpl = $this->getDealtTplCnt();
+
+            $content = str_replace(
+                ['{$content}', '{$blogName}', '{$blogSlogan}'],
+                [$cnt, $item['name'], $item['slogan']],
+                $tpl);
+
+
+            file_put_contents(rtrim(PATH_ROOT, '/')."/{$filename}", $content);
+        }
+        return $timeMapTitles;
     }
 
     /**
@@ -285,10 +378,45 @@ class HiBlog {
         if(count($data) >= 2) {
             foreach($data[1] as $i => $includeFile) {
                 $incCnt = file_get_contents(rtrim(PATH_HTML_TPL).'/'.$includeFile);
+
+                // 处理导航
+                if(stripos($includeFile, 'common_nav') !== false) {
+                    $incCnt = $this->dealCommonNav($includeFile, $incCnt);
+                }
                 $tpl = str_replace($data[0][$i], $incCnt, $tpl);
             }
         }
         return $tpl;
+    }
+
+    /**
+     * 处理导航栏
+     * @param $navFile
+     * @param $cnt
+     * @return mixed
+     * @throws Exception
+     */
+    private function dealCommonNav($navFile, $cnt) {
+        if(stripos($navFile, '_en') !== false) { // 英文
+            $navConf = HEADER_NAV_EN;
+        }elseif(stripos($navFile, '_zh') !== false){
+            $navConf = HEADER_NAV_ZH;
+        }else {
+            $navConf = HEADER_NAV_ALL;
+        }
+
+        $arrNav = explode(',', $navConf);
+        $navStr = '';
+        foreach($arrNav as $item) {
+            $arr = explode(':', $item);
+            if(count($arr) != 2) {
+                throw new Exception("[-]Error: 导航配置参数错误: ".$navConf);
+            }
+
+            $navStr .= "<a href='{$arr[1]}'>$arr[0]</a>";
+        }
+
+        return str_replace('{$navList}', $navStr, $cnt);
     }
 
     private function getDealtTplCnt() {
@@ -312,11 +440,13 @@ class HiBlog {
             'title' => $meta[0],
             'author' => $meta[1],
             'ctime' => $meta[2],
-            'tags' => $meta[3]
+            'tags' => $meta[3],
+            'category' => $meta[4],
+            'lang' => $meta[5],
         ];
     }
 
-        /**
+    /**
      * Get all files of the path
      * @param string $path
      * @return array

@@ -4,7 +4,7 @@ layout: post
 title: About Professional  
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags:   
 ctime: 2015-12-18 18:11:09  
 lang: zh  

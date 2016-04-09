@@ -19,9 +19,10 @@ do
     esac
 
     case "$option" in
-        --help)                          help=yes                   ;;
+        --help)                        help=yes                   ;;
 
-        --file=*)                      MD_FILENAME="$value"            ;;
+        --all)                       MD_ALL=yes                   ;;
+        --file=*)                      MD_FILENAME="$value"         ;;
         --index=*)                     index="$value"         ;;
         *)
             echo "$0: error: invalid option \"$option\""

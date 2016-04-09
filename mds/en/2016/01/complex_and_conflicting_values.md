@@ -4,7 +4,7 @@ layout: post
 title: Complex and conflicting values
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags: Daily Thoughts  
 ctime: 2016-01-03 15:41:21  
 lang: en  

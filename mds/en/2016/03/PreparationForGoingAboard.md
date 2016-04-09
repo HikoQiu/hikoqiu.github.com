@@ -4,7 +4,7 @@ layout: post
 title: Preparation for going aboard  
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags:   
 ctime: 2016-03-12 22:18:47  
 lang: en  

@@ -4,7 +4,7 @@ layout: post
 title: English.Way  
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags:   
 ctime: 2015-12-22 22:00:55  
 lang: zh  

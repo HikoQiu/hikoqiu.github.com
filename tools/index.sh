@@ -11,5 +11,5 @@ logfile=$PATH_LOG/$date"_index.log"
 rm $logfile
 $PHP $PATH_TOOL/php/index.php >> $logfile
 
-#cat $logfile
+cat $logfile
 echo "[+] 索引完成!"

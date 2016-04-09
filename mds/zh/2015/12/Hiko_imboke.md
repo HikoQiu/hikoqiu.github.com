@@ -4,7 +4,7 @@ layout: post
 title: Hiko.im 
 subtitle:   
 author: Hiko  
-category: default  
+category: daily
 tags: daily   
 ctime: 2015-12-18 01:49:32  
 lang: zh  
