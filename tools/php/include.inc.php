@@ -15,6 +15,6 @@ foreach($conf as $item) {
         continue;
     }
     
-    // define key => val according to "conf" file
+    // 将tools中的conf中的所有大写变量设置成全局变量
     define($item[0], trim($item[1], "'\""));
 }

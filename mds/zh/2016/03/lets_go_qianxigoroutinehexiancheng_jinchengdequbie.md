@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go]浅析goroutine和线程、进程的区别  
+title: [Let's Go] 浅析goroutine和线程、进程的区别
 subtitle:   
 author: Hiko  
 category: tech  

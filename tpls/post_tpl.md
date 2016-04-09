@@ -4,7 +4,7 @@ layout: post
 title: {title}  
 subtitle: {stitle}  
 author: {author}  
-category: default  
+category: {category}
 tags:   
 ctime: {ctime}  
 lang: {lang}  

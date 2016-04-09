@@ -8,6 +8,7 @@ help=no
 
 # Post's conf
 TITLE=
+CATEGORY=
 SUB_TITLE=
 LANG=zh
 AUTHOR=Hiko
@@ -24,6 +25,7 @@ do
         --help)                          help=yes                   ;;
 
         --title=*)                      TITLE="$value"            ;;
+        --category=*)                    CATEGORY="$value"         ;;
         --stitle=*)                     SUB_TITLE="$value"         ;;
         --author=*)                     AUTHOR="$value"         ;;
         --lang=*)                       LANG="$value"           ;;
@@ -43,6 +45,7 @@ if [ $help = yes ]; then
 
     echo "  --title         post's title"
     echo "  --stitle        post's sub title"
+    echo "  --category      post's category"
     echo "  --author        post's author"
     echo "  --lang          post's language version"
     echo
@@ -53,9 +56,9 @@ fi
 # generate new post
 date=`date '+%Y%m%d'`
 logfile=$PATH_LOG/$date"_debug.log"
-$PHP $PATH_TOOL/php/post.php --title=$TITLE --stitle=$SUB_TITLE --author=$AUTHOR --lang=$LANG >> $logfile
+rm $logfile
+$PHP $PATH_TOOL/php/post.php --title=$TITLE --stitle=$SUB_TITLE --author=$AUTHOR --category=$CATEGORY --lang=$LANG >> $logfile
 
-echo "--debug"
 cat $logfile
 
 # vim open the file

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Path conf
-. ./tools/conf
+#. ./tools/conf
 
 # Definitions
 help=no
@@ -50,11 +50,10 @@ fi
 # parse md file
 date=`date '+%Y%m%d'`
 logfile=$PATH_LOG/$date"_debug.log"
+rm $logfile
 $PHP $PATH_TOOL/php/parse_md.php --file=$MD_FILENAME --all=$MD_ALL >> $logfile
 
-echo "--debug"
 cat $logfile
-
 
 if [ $index = yes ]; then
     . $PATH_TOOL/index.sh

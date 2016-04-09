@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go]Go/PHP/Java垃圾回收简单对比  
+title: [Let's Go] Go/PHP/Java垃圾回收简单对比
 subtitle:   
 author: Hiko  
 category: tech  

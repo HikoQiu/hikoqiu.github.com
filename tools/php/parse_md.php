@@ -13,7 +13,7 @@ try{
     $file = '';
     if(!empty($params['file'])) {
         if(!file_exists($params['file'])) {
-            throw new Exception($params['file'].' not exist.');
+            throw new Exception('文件: '.$params['file'].' 不存在.');
         }
         
         $file = $params['file'];
@@ -29,7 +29,7 @@ try{
     HiBlog::ins()->setTplFile(PATH_HTML_TPL.'/post_tpl.html');
     HiBlog::ins()->setPostHtmlDir(PATH_POST_HTML);
     $htmlPath = HiBlog::ins()->parsePostMd($file);
-    echo "[".date('Y-m-d H:i:s')."]\nParse post.md: {$file}\nHtml path: {$htmlPath}\n";
+    echo "[".date('Y-m-d H:i:s')."]\n解析: {$file}\nHtml path: {$htmlPath}\n";
 } catch (Exception $ex) {
-    exit('Fail: '.$ex->getMessage()."\n");
+    exit('[-] Error: '.$ex->getMessage()."\n");
 }

@@ -1,7 +1,27 @@
 #!/bin/sh
 
-PHP=/usr/bin/php
+## 博客配置
+BLOG_NAME="异乡海子 | Hiko.im"
+BLOG_SLOGAN="闲庭雅苑"
+DEFAULT_AUTHOR=Hiko
 
+# 导航配置
+HEADER_NAV=(
+    "首页=>/"
+    "技术学科=>/tech.html"
+    "随笔=>/daily.html"
+    "关于=>/about.html"
+)
+
+# 分类, 与HEADER_NAV对应
+CATEGORIES="
+    tech
+    daily
+"
+
+# -- 分割线 --
+PHP=/usr/bin/php
+##  HiBlog配置
 PATH_TOOL='./tools'
 PATH_LOG='./logs'
 PATH_POST_MD="./mds"

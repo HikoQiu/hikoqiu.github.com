@@ -10,8 +10,8 @@ body {
   color: #606c71; }
 
 a {
-  color: #1e6bb8;
-  text-decoration: none; }
+    color: #1b1b1b;
+    text-decoration: none; }
   a:hover {
     text-decoration: underline; }
 
@@ -56,20 +56,51 @@ a {
 .page-header {
   color: #fff;
   text-align: center;
-  background-color: #159957;
-  background-image: linear-gradient(120deg, #155799, #159957); }
+  background-color: #1b1b1b;
+  /*  background-color: #159957;
+    background-image: linear-gradient(120deg, #155799, #159957); */
+}
+
+
+.page-nav-list {
+    color: #fff;
+    text-align: left;
+    background-color: #000;
+}
+
+.page-nav-list a{
+    color: #fff;
+    margin-right: 1rem;
+}
 
 @media screen and (min-width: 64em) {
   .page-header {
-    padding: 5rem 6rem; } }
+      padding: 4rem 6rem 2rem; } 
+
+  .page-nav-list {
+      padding: 0.8rem 6rem;
+  }
+}
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .page-header {
-    padding: 3rem 4rem; } }
+      padding: 3rem 4rem 1.5rem; 
+  } 
+
+  .page-nav-list {
+      padding: 0.8rem 4rem;
+  }
+}
 
 @media screen and (max-width: 42em) {
   .page-header {
-    padding: 2rem 1rem; } }
+      padding: 2rem 1rem 1rem; 
+  } 
+  .page-nav-list {
+      padding: 0.8rem 1rem;
+  }
+
+}
 
 .project-name {
   margin-top: 0;
@@ -77,15 +108,15 @@ a {
 
 @media screen and (min-width: 64em) {
   .project-name {
-    font-size: 3.25rem; } }
+      font-size: 1.50rem; } }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .project-name {
-    font-size: 2.25rem; } }
+      font-size: 1.25rem; } }
 
 @media screen and (max-width: 42em) {
   .project-name {
-    font-size: 1.75rem; } }
+      font-size: 1.25rem; } }
 
 .project-tagline {
   margin-bottom: 2rem;
@@ -112,7 +143,7 @@ a {
   margin-top: 2rem;
   margin-bottom: 1rem;
   font-weight: normal;
-  color: #159957; }
+  color: #6b6b6b; }
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {

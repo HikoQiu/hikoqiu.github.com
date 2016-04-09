@@ -108,26 +108,34 @@ class HiBlog {
         
         return $data;
     }
-    
+
     /**
      * Generate new post.md
-     * @param string $title
-     * @param string $stitle
-     * @param string $author
+     * @param $title
+     * @param $category
+     * @param $stitle
+     * @param $author
+     * @return bool|int
+     * @throws Exception
      */
-    public function genPost($title, $stitle, $author) {
+    public function genPost($title, $category, $stitle, $author) {
         if(!$this->getPath()) {
             throw new Exception('Empty md path', 1002);
         }
         
         // post already exit
         if(file_exists($this->getPath())) {
+            // @TODO 抛异常
             return true;
         }
         
         // copy tpl as basic content
-        $content = file_get_contents($this->getTplFile());
-        $content = $this->_replaceBasicInfo($content, str_replace('.', ' ', $title), str_replace(',', ' ', $stitle), $author);
+        $content = $this->getDealtTplCnt();
+        $content = $this->_replaceBasicInfo($content,
+            str_replace('.', ' ', $title),
+            $category,
+            str_replace(',', ' ', $stitle),
+            $author);
         return file_put_contents($this->getPath(), $content);
     }
     
@@ -135,19 +143,20 @@ class HiBlog {
      * Replace tpl's basic info
      * @param string $content
      * @param string $title
+     * @param string $category
      * @param string $stitle
      * @param string $author
      * @return string
      */
-    private function _replaceBasicInfo($content, $title, $stitle, $author) {
+    private function _replaceBasicInfo($content, $title, $category, $stitle, $author) {
         $params = [
             '{title}' => $title,
+            '{category}' => $category,
             '{stitle}' => $stitle,
             '{author}' => $author,
             '{ctime}' => date('Y-m-d H:i:s'),
             '{lang}' => $this->getLang()
         ];
-        
         foreach($params as $key => $val) {
             $content = str_replace($key, $val, $content);
         }
@@ -192,7 +201,7 @@ class HiBlog {
             '{$tags}' => $arrHeader['tags'],
             '{$body}' => $body
         ];
-        $tpl = file_get_contents($this->getTplFile());
+        $tpl = $this->getDealtTplCnt();
         foreach($repData as $key => $val) {
             $tpl = str_replace($key, $val, $tpl);
         }
@@ -253,15 +262,39 @@ class HiBlog {
             }
             
             $content .= $timeMapCon[$t];
-            
             $lastMonth = $month;
         }
         
         $content = Markdown::defaultTransform($content);
-        $tpl = file_get_contents($this->getTplFile());
-        $content = str_replace('{$content}', $content, $tpl);
+        $tpl = $this->getDealtTplCnt();
+        $content = str_replace(
+            ['{$content}', '{$blogName}', '{$blogSlogan}'],
+            [$content, BLOG_NAME, BLOG_SLOGAN],
+            $tpl);
         file_put_contents(PATH_ROOT.'/index.html', $content);
         return $files;
+    }
+
+    /**
+     * 处理导入公共文件
+     * @param $tpl
+     * @return mixed
+     */
+    private function dealInclude($tpl) {
+        preg_match_all('/\{@include\(\"(.*)\"\)\}/', $tpl, $data);
+        if(count($data) >= 2) {
+            foreach($data[1] as $i => $includeFile) {
+                $incCnt = file_get_contents(rtrim(PATH_HTML_TPL).'/'.$includeFile);
+                $tpl = str_replace($data[0][$i], $incCnt, $tpl);
+            }
+        }
+        return $tpl;
+    }
+
+    private function getDealtTplCnt() {
+        $tpl = file_get_contents($this->getTplFile());
+        $tpl = $this->dealInclude($tpl);
+        return $tpl;
     }
     
     /**

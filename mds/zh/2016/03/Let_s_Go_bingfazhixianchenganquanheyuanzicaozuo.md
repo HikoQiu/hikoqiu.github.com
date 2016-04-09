@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go]并发之线程安全和原子操作  
+title: [Let's Go] 并发之线程安全和原子操作
 subtitle:   
 author: Hiko  
 category: tech  

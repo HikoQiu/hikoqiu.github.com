@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [In C]bus error/总线错误  
+title: [In C] bus error/总线错误
 subtitle:   
 author: Hiko  
 category: tech  
@@ -13,8 +13,6 @@ lang: zh
 
 ##### 触发`bus error`的代码片段  
 
-
-````
 
 	char s1[10] = "string";
 	char s2[10];
@@ -28,13 +26,11 @@ lang: zh
 	s3[0] = 'S'; // Occur: bus err
 	printf("1: %s, 2: %s, 3: %s, 4: %s \n", s1, s2, s3, s4);
 
-````
 
 #### 原因
 
 Quote from stackoverflow:
 
-````
 
 Bus errors are rare nowadays on x86 and occur when your processor cannot even attempt the memory access requested, typically:
 
@@ -49,5 +45,4 @@ PS: To be more precise this is not manipulating the pointer itself that will cau
 
 [What is a bus error?](http://stackoverflow.com/a/212585/2398826)
 
-````
 

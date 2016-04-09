@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go]知道Slice多一点  
+title: [Let's Go] 知道Slice多一点
 subtitle:   
 author: Hiko  
 category: tech  
