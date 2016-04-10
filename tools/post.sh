@@ -55,8 +55,11 @@ fi
 
 # generate new post
 date=`date '+%Y%m%d'`
-logfile=$PATH_LOG/$date"_debug.log"
-rm $logfile
+logfile=$PATH_LOG/$date"_post.log"
+if [ -e $logfile ]; then
+    rm $logfile
+fi
+
 $PHP $PATH_TOOL/php/post.php --title=$TITLE --stitle=$SUB_TITLE --author=$AUTHOR --category=$CATEGORY --lang=$LANG >> $logfile
 
 cat $logfile
@@ -68,4 +71,4 @@ newfile=$(cat $PATH_LOG/$LATEST_FILE_NAME)
 # vim $newfile
 
 # here, I use Mou (a markdown editor) to write my post.
-/Applications/Mou.app/Contents/MacOS/Mou $newfile >> /tmp/null &
+$EDITOR $newfile >> /tmp/null &

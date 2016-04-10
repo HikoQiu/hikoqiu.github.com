@@ -138,6 +138,41 @@ class HiBlog {
             $author);
         return file_put_contents($this->getPath(), $content);
     }
+
+    public function listMds($num) {
+        $timeMapTitles = $this->getTimeDESCMdInfoList();
+        $list = [];
+        $counter = 0;
+        foreach($timeMapTitles as $time => $info) {
+            $list[] = '#'.$counter.'  '.$info['title'];
+            if(++$counter >= $num) {
+                break;
+            }
+        }
+
+        return $list;
+    }
+
+    public function getMdPathByIndex($index) {
+        $timeMapTitles = $this->getTimeDESCMdInfoList();
+        if($index > count($timeMapTitles) - 1) {
+            throw new Exception("[-] Error: 文章编号无效 {$index}");
+        }
+        $list = array_values($timeMapTitles);
+        return $list[$index]['filename'];
+    }
+
+    public function getTimeDESCMdInfoList() {
+        $files = $this->dirFiles(PATH_POST_MD);
+        $timeMapTitles = [];
+        foreach($files as $index => $file) {
+            // 构造markdown的语法
+            $params = $this->parseMdToParams($file);
+            $timeMapTitles[$params['ctime']] = $params;
+        }
+        krsort($timeMapTitles);
+        return $timeMapTitles;
+    }
     
     /**
      * Replace tpl's basic info
@@ -171,43 +206,23 @@ class HiBlog {
      * @throws Exception
      */
     public function parsePostMd($filename) {
-        $content = file_get_contents($filename);
-        
-        // 1.1 header & body of the post
-        $data = explode('---', $content);
-        if(count($data) <= 2) {
-            throw new Exception('[-] Error: 无法解析文章: '.$filename);
-        }
-        
-        $header = explode("\n", $data[1]);
-        $arrHeader = [];
-        foreach($header as $item) {
-            $item = trim($item, ' 　');
-            if(empty($item)) {
-                continue;
-            }
-            $arr = explode(':', $item);
-            $arrHeader[$arr[0]] = trim(implode(':', array_slice($arr, 1)));
-        }
-        
-        $body = array_slice($data, 2);
-        $body = implode('---', $body);
-        $body = Markdown::defaultTransform($body);
+        $params = $this->parseMdToParams($filename);
+        $body = Markdown::defaultTransform($params['body']);
         
         // 2.1 set to html tpl
         $repData = [
-            '{$title}' => $arrHeader['title'],
-            '{$subtitle}' => $arrHeader['subtitle'],
-            '{$author}' => $arrHeader['author'],
-            '{$ctime}' => $arrHeader['ctime'],
-            '{$tags}' => $arrHeader['tags'],
-            '{$category}' => $arrHeader['category'],
-            '{$lang}' => $arrHeader['lang'],
+            '{$title}' => $params['title'],
+            '{$subtitle}' => $params['subtitle'],
+            '{$author}' => $params['author'],
+            '{$ctime}' => $params['ctime'],
+            '{$tags}' => $params['tags'],
+            '{$category}' => $params['category'],
+            '{$lang}' => $params['lang'],
             '{$body}' => $body
         ];
 
         // 根据文章类型设置模板
-        if($arrHeader['lang'] == 'en') {
+        if($params['lang'] == 'en') {
             $this->setTplFile(PATH_HTML_TPL.'/post_tpl_en.html');
         }else {
             $this->setTplFile(PATH_HTML_TPL.'/post_tpl_zh.html');
@@ -215,11 +230,11 @@ class HiBlog {
         $tpl = $this->getDealtTplCnt();
         $tpl = str_replace(array_keys($repData), array_values($repData), $tpl);
         
-        $ctime = $arrHeader['ctime'];
+        $ctime = $params['ctime'];
         $year = date('Y', strtotime($ctime));
         $month = date('m', strtotime($ctime));
-        $lang = $arrHeader['lang'];
-        $cat = $arrHeader['category'];
+        $lang = $params['lang'];
+        $cat = $params['category'];
         
         $baseDir = $this->getPostHtmlDir();
         $path = $baseDir.'/'.$lang.'/'.$year.'/'.$month;
@@ -232,6 +247,33 @@ class HiBlog {
         $file = $path.'/'.$filenameInfo['filename']."_{$cat}".'.html';
         file_put_contents($file, $tpl);
         return $file;
+    }
+
+    private function parseMdToParams($filename) {
+        $content = file_get_contents($filename);
+
+        // 1.1 header & body of the post
+        $data = explode('---', $content);
+        if(count($data) <= 2) {
+            throw new Exception('[-] Error: 无法解析文章: '.$filename);
+        }
+
+        $header = explode("\n", $data[1]);
+        $params = [];
+        foreach($header as $item) {
+            $item = trim($item, ' 　');
+            if(empty($item)) {
+                continue;
+            }
+            $arr = explode(':', $item);
+            $params[$arr[0]] = trim(implode(':', array_slice($arr, 1)));
+        }
+
+        $body = array_slice($data, 2);
+        $body = implode('---', $body);
+        $params['body'] = $body;
+        $params['filename'] = $filename;
+        return $params;
     }
 
     /**
@@ -426,7 +468,7 @@ class HiBlog {
     }
     
     /**
-     * get meta data of the file
+     * get meta data of the (post Html)file
      * @param string $file
      * @return array
      */

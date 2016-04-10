@@ -23,6 +23,8 @@ LANGS="en zh"
 
 # -- 分割线 --
 PHP=/usr/bin/php
+EDITOR=/Applications/Mou.app/Contents/MacOS/Mou
+
 ##  HiBlog配置
 PATH_TOOL='./tools'
 PATH_LOG='./logs'

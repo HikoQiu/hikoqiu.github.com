@@ -10,7 +10,8 @@ index
 new
 parse
 del
-build
+list
+edit
 "
 
 # 帮助信息
@@ -20,8 +21,9 @@ HELP_CNT="
     index 索引文章
     new 新建文章 e.g: --t=标题 --c=分类(tech/daily, conf中配置) --a=作者(默认: Hiko) --l=语言(默认: zh, zh/en)
     parse 解析指定文章(从Markdown到HTML) e.g: --f=md文件路径/all(全部)
-    del 删除指定文章 e.g: --f=md文件路径
-    build 解析所有md并且重新索引
+    list 列出所有md文件 e.g: --n=数量(默认: 10, 时间倒序)
+    edit 编辑某个md文件(根据list的结果的标号), e.g: --i=标号(如: #0)
+    del @TODO删除指定文章 e.g: --f=md文件路径
 "
 
 ## 解析当前操作
@@ -47,6 +49,7 @@ if [ $flag == false ]; then
 
     支持: $HELP_CNT
     "
+    exit -1
 fi
 
 ## 处理参数
@@ -59,6 +62,12 @@ AUTHOR=$DEFAULT_AUTHOR
 
 # 解析单个文件参数
 FILENAME=
+
+# 编辑md文件
+MD_NUM=10
+
+# 通过标号获取md路径
+MD_INDEX=-1
 
 for option
 do
@@ -97,6 +106,14 @@ do
             FILENAME="$value"
             ;;
 
+       #list
+       --n=*)
+            MD_NUM="$value"
+            ;;
+
+        --i=*)
+            MD_INDEX="$value"
+            ;;
         *)
             # 空操作
         ;;
@@ -143,6 +160,14 @@ elif [ "$op" == "new" ]; then
     fi
 
     . ./tools/post.sh --title="$TITLE" --category="$CATEGORY" --author="$AUTHOR" --lang="$LANG"
+
+# 列出所有文章
+elif [ "$op" == "list" ];then
+    . ./tools/list.sh --num=$MD_NUM
+
+# 编辑文章
+elif [ "$op" == "edit" ];then
+    . ./tools/edit.sh --index=$MD_INDEX
 fi
 
 
