@@ -24,4 +24,4 @@ if [ ! -e $ret ];then
     exit -1
 fi
 
-$EDITOR $ret >> /tmp/null &
+$EDITOR $ret >> /tmp/null&

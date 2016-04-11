@@ -19,11 +19,11 @@ HELP_CNT="
     --help         查看帮助
 
     index 索引文章
-    new 新建文章 e.g: --t=标题 --c=分类(tech/daily, conf中配置) --a=作者(默认: Hiko) --l=语言(默认: zh, zh/en)
-    parse 解析指定文章(从Markdown到HTML) e.g: --f=md文件路径/all(全部)
-    list 列出所有md文件 e.g: --n=数量(默认: 10, 时间倒序)
-    edit 编辑某个md文件(根据list的结果的标号), e.g: --i=标号(如: #0)
-    del @TODO删除指定文章 e.g: --f=md文件路径
+    new 新建文章 e.g: -t=标题 -c=分类(tech/daily, conf中配置) -a=作者(默认: Hiko) -l=语言(默认: zh, zh/en)
+    parse 解析指定文章(从Markdown到HTML) e.g: -f=md文件路径/all(全部)
+    list 列出所有md文件 e.g: -n=数量(默认: 10, 时间倒序)
+    edit 编辑某个md文件(根据list的结果的标号), e.g: -i=标号(如: #0)
+    del @TODO删除指定文章 e.g: -f=md文件路径
 "
 
 ## 解析当前操作
@@ -86,32 +86,32 @@ do
             FILENAME="all"
             ;;
 
-        --t=*)
+        -t=*)
             TITLE="$value";
             ;;
 
-        --c=*)
+        -c=*)
             CATEGORY="$value";
             ;;
 
-        --a=*)
+        -a=*)
             AUTHOR="$value"
             ;;
 
-        --l=*)
+        -l=*)
             LANG="$value"
             ;;
 
-       --f=*)
+       -f=*)
             FILENAME="$value"
             ;;
 
        #list
-       --n=*)
+       -n=*)
             MD_NUM="$value"
             ;;
 
-        --i=*)
+        -i=*)
             MD_INDEX="$value"
             ;;
         *)
