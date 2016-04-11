@@ -48,4 +48,4 @@ lang: zh
 
 #### 关于我
 
-![Hiko Qiu](../../../../resource/images/hiko.im.jpg)
+![Hiko Qiu](/resource/images/hiko.im.jpg)
