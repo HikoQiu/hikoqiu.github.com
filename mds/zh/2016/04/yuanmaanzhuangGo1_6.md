@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: 源码安装Go1 6  
+title: 源码安装Go1.6  
 subtitle:   
 author: Hiko  
 category: tech
@@ -24,7 +24,7 @@ lang: zh
 > Golang在版本1.5之后(包括1.5)实现了自举(bootstrapping)，指的是：用要编译的目标编程语言编写其编译器（或汇编器）。  
 参考：[Go 1.5 Bootstrap Plan](https://docs.google.com/document/d/1OaatvGhEAq7VseQ9kkavxKNAfepWy2yhPUBs96FGV28/edit)
 
-##### 1.1 下载
+#### 1.1 下载
 
 先从Go的官网下载1.4版本的源代码，地址见: [源码列表](https://golang.org/dl/)。  
 
@@ -33,14 +33,14 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 为了日后更方便管理源码和已经安装的软件，建议在/usr/local下见建一个go目录（路径: `/usr/local/go`），然后把刚下载的Go1.4源码解压到`/usr/local/go/go1.4`目录。
 
 
-##### 1.2 编译
+#### 1.2 编译
 
 进入`/usr/local/go/go1.4/src`执行`./all.bash`。
 一切顺利的话，将会在`/usr/local/go/go1.4/bin`看到两个二进制文件 `go` 和 `gofmt`。
 
 #### 2 下载Go1.6源码并通过Go1.4编译安装Go1.6
 
-##### 2.1 下载
+#### 2.1 下载
 
 同样从[源码列表](https://golang.org/dl/)或者[Github/Golang](https://github.com/golang/go)仓库下载下载1.6版本的源代码。
 
@@ -50,7 +50,7 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 
 > export GOROOT_BOOTSTRAP=/usr/local/go/go1.4
 
-##### 2.2 安装
+#### 2.2 安装
 
 进入`/usr/local/go/src`执行`./all.bash`。
 一切顺利的话，将会在`/usr/local/go/bin`看到两个二进制文件 `go` 和 `gofmt`。
@@ -67,13 +67,13 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 
 个人使用Intellij IDEA进行Go开发，下载一个Go插件，接着配置Go的SDK，代码提示、包的自动导入都很方便。
 
-##### 3.1 下载IntelliJ IDEA
+#### 3.1 下载IntelliJ IDEA
 
 从编辑器的官网下载：[IntelliJ IDEA](https://www.jetbrains.com/idea/#chooseYourEdition)，它有提供社区版，也够用了。
 
 安装完编辑器后装上[Go插件](https://github.com/go-lang-plugin-org)，可以直接从编辑器中查找并安装，装完插件后重启编辑器。
 
-##### 3.2 配置Go SDK
+#### 3.2 配置Go SDK
 
 新建Go项目，配置SDK路径，SDK路径：`/usr/local/go`。
 如果新建Go项目时没配SDK，也可以在打开项目之后，在`File -> Project Structure...`中配置。
