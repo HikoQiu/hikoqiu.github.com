@@ -15,9 +15,12 @@ lang: zh
 
 - 1\. Slice数据结构
 - 2\. 使用Slice须知
-- 2.1 值传递下的Slice
-- 2.2 Slice截取和扩充
+	- 2.1 值传递下的Slice
+	- 2.2 Slice截取和扩充
 - 3\. Slice操作常用函数
+- 4\. 其他
+	- 4.1 关于string
+	- 4.2 关于Slice nil
 
 > 前言 默认你是对数组有一定的认识。
 
@@ -121,23 +124,110 @@ Rob Pike有这样一句话定义Slice: `slice不是数组，它是对数组进�
 对于slice也一样，如果一个slice已经确定了容量(capacity)，那么如果要扩充该slice的容量，也必须重新分配一个存数据的数组。
 > 备注：slice的容量在使用make([]byte, 10, 20)时，第三个参数已经确定；第三个参数就是容量(capacity)，如果不指定，默认跟第二个参数（长度len）一样。
 
-当我们对slice进行截取子slice的时候(比如: data[0:2])，到底是给新的子slice分配了新数组还是使用了原slice相同的元素地址？这是两种不同的处理方式。
+##### 截取子Slice
 
-对于上面的认识，这里整理两个疑问：
+当基于原Slice进行截取子Slice时，实际上操作的还是原Slice的元素。也就是对子Slice的元素进行修改，都会在原Slice中体现，从上面`实验2`中就可以看出。
 
-1，当扩充一个slice的容量时，重新分配了一个存数据的数组，那么这个时候只是修改了原来SliceHeader中的数组指针还是原原本本重新新建了一个slice(新的SliceHeader 和 新的数组)？
+也就是，在Slice的容量(capacity)范围内子Slice截取，都是直接使用了原Slice的数组，并没有为该子Slice分配新的数组。
 
-2，当截取子slice的时候，到底是给新的子slice分配了新数组还是使用了原slice相同的元素地址？
+如果我需要截取一个子Slice并且希望该子Slice有新的数组，该怎么操作？这是可以使用copy()函数。
 
+	sub := make([]int, 2)
+	copy(sub, data[3:5])
 
-**实验 1**
+##### 扩充Slice
 
+事实上，扩充Slice的操作就是：重新创建一个更大容量的Slice，然后把原Slice中的数据复制到新的Slice里面。
 
-**实验 2**
+比如：常用操作`append()`
+
+	fmt.Printf("append()前: len: %d, cap: %d \n", len(data), cap(data))
+	data = append(data, 5)
+	fmt.Printf("append()后: len: %d, cap: %d \n", len(data), cap(data))
+
+结果
+
+	append()前: len: 10, cap: 10 
+	append()后: len: 11, cap: 20 
+
+append()中的操作就是新建了一个容量为原来两倍的Slice，然后把原来的数据复制到新Slice并且把新的元素加上。
 
 
 #### 3. Slice操作常用函数
 
+3.1 Go提供了方便操作的语法糖，如： data[2:5]，以此来获取第二到第四（包括第四）个元素。
+
+> 备注： ':' 左右都可以不指定值。右边的值不可以超过该Slice的容量大小，否则会Panic。
+
+3.1 `copy()` 复制Slice的值到另外一个Slice，上面例子也用到了，这函数会自动参考len更小的那个Slice，不会发生爆出`slice bounds out of range`的异常。
+
+3.2 `append()`给某个Slice添加元素，也是常用的，上面的例子也有体现。
+
+
+#### 4. 其他
+
+
+#### 4.1 关于string
+
+从源码包`runtime`中`string.go`中可以看到字符串的struct。
+
+	type stringStruct struct {
+		str unsafe.Pointer
+		len int
+	}
+	
+也就是，string实际上就是**只读**的byte切片(Slice)，只是从Golang语言层面提供的语法支持而已。因为只能读，所以容量的存在与否都无济于事。
+
+#### 4.2 关于Slice nil
+
+我们知道`make()`方法专门用来新建Slice、map、chan，但是我们也可以用`new()`来建Slice，但是两者有区别。
+
+	// 代码片段
+	nilSlice := new([]int)
+	fmt.Printf("nilSlice is nil: %v \n", *nilSlice == nil)
+	emptySlice := make([]int, 0)
+	fmt.Printf("emptySlice is nil: %v \n", emptySlice == nil)
+	
+结果打印
+	
+	nilSlice is nil: true 
+	emptySlice is nil: false 
+
+也就是用`new()`创建后的Slice变量是零值，而make()创建一个0长度的Slice并不是nil。
+
+为什么？因为`new()` 和 `make()`做的事情不一样。
+
+**`new()`做了两件事**
+
+- 1. 为该类型分配内存
+- 2. 置零值（不同类型的零值不一样，比如: bool是false，整型是0...等）
+
+**`make()`也做了两件事**
+
+- 1. 为该类型分配内存
+- 2. 初始化
+
+以Slice为例，`new([]int)`得到的SliceHeader是：
+
+	sliceHeader {
+    	array: nil,
+    	len: 0,
+    	cap: 0,
+	}
+
+而`make([]int, 0)`得到的SliceHeader应该是：
+
+	sliceHeader {
+    	array: 0x8201d0140, // 指向0个元素的数组
+    	len: 0,
+    	cap: 0,
+	}
+
+- - -
+
+#### 结语
+
+从Slice的实现、使用场景进行更加全面的了解，会对在项目中的使用有更大的帮助以及尽量避免因为不知道细节而错用。
 
 
 
