@@ -48,4 +48,13 @@ lang: zh
 
 #### 关于我
 
+- 91年  
+- 潮州人  
+- 广州大学城 广东卖鱼卖猫大学
+
+
+
+
+
+
 ![Hiko Qiu](/resource/images/hiko.im.jpg)
