@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: 源码安装Go1.6  
+title: [Let's Go] 源码安装Go1.6  
 subtitle:   
 author: Hiko  
 category: tech
