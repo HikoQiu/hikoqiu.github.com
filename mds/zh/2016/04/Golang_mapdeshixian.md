@@ -11,7 +11,7 @@ lang: zh
 
 ---
 
-#### 概览
+### 概览
 
 - 1\. map的数据结构
 - 2\. 冲突解决
@@ -20,4 +20,6 @@ lang: zh
 - 5\. 其他
 
 
-内容准备中.
+### 参考
+
+- [Macro View of Map Internals In Go](https://www.goinggo.net/2013/12/macro-view-of-map-internals-in-go.html)

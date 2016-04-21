@@ -141,13 +141,13 @@ iii. 使用方式
 
 Go 提供了并发安全的 `sync` 库 (了解更多可以查看[`《Go并发安全之sync库》`](/posts/zh/2016/04/Gobingfaanquanzhisyncku_tech.html))，其中有提供原子操作 `atomic`。
 
-解决方式：
+**解决方式：**
 
-i. 定义*全局*变量 GoroutineId 
+i. 定义*全局*变量 GoroutineId。
 	
 	var GoroutineId int64
 	 
-ii. 在每个需要需要唯一标记的 goroutine中使用原子操作进行自增
+ii. 在每个需要需要唯一标记的 goroutine 中使用原子操作进行加1，分配唯一的id。
 
 	atomic.AddInt64(&GoroutineId, 1)
 	

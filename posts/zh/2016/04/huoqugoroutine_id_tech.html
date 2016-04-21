@@ -169,14 +169,14 @@ func GetGoid() int64 {
 
 <p>Go 提供了并发安全的 <code>sync</code> 库 (了解更多可以查看<a href="/posts/zh/2016/04/Gobingfaanquanzhisyncku_tech.html"><code>《Go并发安全之sync库》</code></a>)，其中有提供原子操作 <code>atomic</code>。</p>
 
-<p>解决方式：</p>
+<p><strong>解决方式：</strong></p>
 
-<p>i. 定义<em>全局</em>变量 GoroutineId </p>
+<p>i. 定义<em>全局</em>变量 GoroutineId。</p>
 
 <pre><code>var GoroutineId int64
 </code></pre>
 
-<p>ii. 在每个需要需要唯一标记的 goroutine中使用原子操作进行自增</p>
+<p>ii. 在每个需要需要唯一标记的 goroutine 中使用原子操作进行加1，分配唯一的id。</p>
 
 <pre><code>atomic.AddInt64(&amp;GoroutineId, 1)
 </code></pre>
