@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: 爱干净的人  
+title: [假如生活] 爱干净的人  
 subtitle:   
 author: Hiko  
 category: daily

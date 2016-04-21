@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] Go汇编器快速指南  
+title: [Go细节] Go汇编器快速指南  
 subtitle:   
 author: Hiko  
 category: tech

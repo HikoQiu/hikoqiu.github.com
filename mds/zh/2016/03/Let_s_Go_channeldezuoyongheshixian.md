@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] channel的作用和实现
+title: [Go细节] channel的作用和实现
 subtitle:   
 author: Hiko  
 category: tech  

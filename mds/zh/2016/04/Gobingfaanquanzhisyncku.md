@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] Go并发安全之sync库  
+title: [Go细节] Go并发安全之sync库  
 subtitle:   
 author: Hiko  
 category: tech

@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] Go的runtime调度器实现(准备中)  
+title: [Go细节] Go的runtime调度器实现(准备中)  
 subtitle:   
 author: Hiko  
 category: tech
@@ -19,7 +19,8 @@ lang: zh
 
 #### 参考
 
-- [] [Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit)
+- [-1] [Analysis of the Go runtime scheduler](http://www1.cs.columbia.edu/~aho/cs6998/reports/12-12-11_DeshpandeSponslerWeiss_GO.pdf)
+- [0] [Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit)
 - [1] [The Go Scheduler](http://morsmachine.dk/go-scheduler)  
 - [2] [golang的goroutine是如何实现的 ?](https://www.zhihu.com/question/20862617)
 - [3] [What exactly does runtime gosched do ?](http://stackoverflow.com/questions/13107958/what-exactly-does-runtime-gosched-do)

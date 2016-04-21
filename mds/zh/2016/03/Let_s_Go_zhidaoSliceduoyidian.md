@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] 关于Slice的一些事
+title: [Go细节] 关于Slice的一些事
 subtitle:   
 author: Hiko  
 category: tech  
@@ -11,7 +11,7 @@ lang: zh
 
 ---
 
-#### 概览
+### 概览
 
 - 1\. Slice数据结构
 - 2\. 使用Slice须知
@@ -26,7 +26,7 @@ lang: zh
 
 > 前言 默认你是对数组有一定的认识。
 
-#### 1. Slice数据结构
+### 1. Slice数据结构
 
 
 首先，直接从源码`$YOUR_GO_DIR/src/runtime/slice.go`（其中`$YOUR_GO_DIR`指你自己go源代码的根目录）中找到定义的`slice`结构，如下：
@@ -43,7 +43,7 @@ lang: zh
 
 > 提示：后文将使用SliceHeader代替上面的结构体，SliceHeader是[Rob Pike](https://en.wikipedia.org/wiki/Rob_Pike)在[Golang/slices](https://blog.golang.org/slices)这篇博文中的暂用来指代的名词，这里我也借用一下。为了方便理解，把slice拆成 SliceHeader + 存储数据的数组 两部分。
 
-#### 2. 使用Slice须知
+### 2. 使用Slice须知
 
 #### 2.1 值传递下的Slice
 
@@ -155,7 +155,7 @@ Rob Pike有这样一句话定义Slice: `slice不是数组，它是对数组进�
 append()中的操作就是新建了一个容量为原来两倍的Slice，然后把原来的数据复制到新Slice并且把新的元素加上。
 
 
-#### 3. Slice操作常用函数
+### 3. Slice操作常用函数
 
 3.1 Go提供了方便操作的语法糖，如： data[2:5]，以此来获取第二到第四（包括第四）个元素。
 
@@ -166,7 +166,7 @@ append()中的操作就是新建了一个容量为原来两倍的Slice，然后�
 3.2 `append()`给某个Slice添加元素，也是常用的，上面的例子也有体现。
 
 
-#### 4. 其他
+### 4. 其他
 
 
 #### 4.1 关于string
@@ -235,4 +235,4 @@ append()中的操作就是新建了一个容量为原来两倍的Slice，然后�
 
 参考：
 
-1. [Golang/slices](https://blog.golang.org/slices)
+- [1] [Golang/slices](https://blog.golang.org/slices)

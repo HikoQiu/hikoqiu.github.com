@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] Golang map的实现  
+title: [Go细节] Golang map的实现  
 subtitle:   
 author: Hiko  
 category: tech

@@ -2,9 +2,9 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>[Let's Go] 关于Slice的一些事 - Hiko.im</title>
+    <title>[Go细节] 关于Slice的一些事 - Hiko.im</title>
     <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
-    <!--HiBlog-[Let's Go] 关于Slice的一些事`Hiko`2016-03-14 20:51:11`go,slice,array,value copy`tech`zh-HiBlog--><!-- meta data for index -->
+    <!--HiBlog-[Go细节] 关于Slice的一些事`Hiko`2016-03-14 20:51:11`go,slice,array,value copy`tech`zh-HiBlog--><!-- meta data for index -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
     <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
@@ -22,12 +22,12 @@
 </section>
 
     <section class="page-header">
-        <h1 class="project-name">[Let's Go] 关于Slice的一些事</h1>
+        <h1 class="project-name">[Go细节] 关于Slice的一些事</h1>
         <h2 class="project-tagline">by Hiko / go,slice,array,value copy</h2>
     </section>
 
     <section class="main-content">
-        <div><h4>概览</h4>
+        <div><h3>概览</h3>
 
 <ul>
 <li>1&#46; Slice数据结构</li>
@@ -52,7 +52,7 @@
   <p>前言 默认你是对数组有一定的认识。</p>
 </blockquote>
 
-<h4>1. Slice数据结构</h4>
+<h3>1. Slice数据结构</h3>
 
 <p>首先，直接从源码<code>$YOUR_GO_DIR/src/runtime/slice.go</code>（其中<code>$YOUR_GO_DIR</code>指你自己go源代码的根目录）中找到定义的<code>slice</code>结构，如下：</p>
 
@@ -69,7 +69,7 @@
   <p>提示：后文将使用SliceHeader代替上面的结构体，SliceHeader是<a href="https://en.wikipedia.org/wiki/Rob_Pike">Rob Pike</a>在<a href="https://blog.golang.org/slices">Golang/slices</a>这篇博文中的暂用来指代的名词，这里我也借用一下。为了方便理解，把slice拆成 SliceHeader + 存储数据的数组 两部分。</p>
 </blockquote>
 
-<h4>2. 使用Slice须知</h4>
+<h3>2. 使用Slice须知</h3>
 
 <h4>2.1 值传递下的Slice</h4>
 
@@ -191,7 +191,7 @@ append()后: len: 11, cap: 20
 
 <p>append()中的操作就是新建了一个容量为原来两倍的Slice，然后把原来的数据复制到新Slice并且把新的元素加上。</p>
 
-<h4>3. Slice操作常用函数</h4>
+<h3>3. Slice操作常用函数</h3>
 
 <p>3.1 Go提供了方便操作的语法糖，如： data[2:5]，以此来获取第二到第四（包括第四）个元素。</p>
 
@@ -203,7 +203,7 @@ append()后: len: 11, cap: 20
 
 <p>3.2 <code>append()</code>给某个Slice添加元素，也是常用的，上面的例子也有体现。</p>
 
-<h4>4. 其他</h4>
+<h3>4. 其他</h3>
 
 <h4>4.1 关于string</h4>
 
@@ -290,9 +290,9 @@ emptySlice is nil: false
 
 <p>参考：</p>
 
-<ol>
-<li><a href="https://blog.golang.org/slices">Golang/slices</a></li>
-</ol>
+<ul>
+<li>[1] <a href="https://blog.golang.org/slices">Golang/slices</a></li>
+</ul>
 </div>
 
         <br/>

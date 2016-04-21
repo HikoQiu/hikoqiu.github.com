@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] 源码安装Go1.6  
+title: [Go细节] 源码安装Go1.6  
 subtitle:   
 author: Hiko  
 category: tech
@@ -11,13 +11,15 @@ lang: zh
 
 ---
 
-#### 步骤概览
+### 步骤概览
 
 1. 下载Go1.4源码并编译
 2. 下载Go1.6源码并通过Go1.4编译安装Go1.6
 3. IntelliJ IDEA编辑器配置（可选）
 
-#### 1 下载并编译Go1.4.*源码
+- - -
+
+### 1 下载并编译Go1.4.*源码
 
  - 为什么需要安装Go1.4？
 
@@ -33,7 +35,7 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 为了日后更方便管理源码和已经安装的软件，建议在/usr/local下见建一个go目录（路径: `/usr/local/go`），然后把刚下载的Go1.4源码解压到`/usr/local/go/go1.4`目录。
 
 
-#### 1.2 编译
+### 1.2 编译
 
 进入`/usr/local/go/go1.4/src`执行`./all.bash`。
 一切顺利的话，将会在`/usr/local/go/go1.4/bin`看到两个二进制文件 `go` 和 `gofmt`。
@@ -63,7 +65,7 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 
 > go version go1.6 darwin/amd64
 
-#### 3 配置IntelliJ IDEA编辑器（可选）
+### 3 配置IntelliJ IDEA编辑器（可选）
 
 个人使用Intellij IDEA进行Go开发，下载一个Go插件，接着配置Go的SDK，代码提示、包的自动导入都很方便。
 
@@ -81,8 +83,8 @@ Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以
 至此，就可以开始开发Go项目。
 
 
-#### 参考
+### 参考
 
-1. [Installing Go from source](https://golang.org/doc/install/source)
+- [1] [Installing Go from source](https://golang.org/doc/install/source)
 
-2. [Install Go1.6 from Source on CentOS 7 in China](https://github.com/northbright/Notes/blob/master/Golang/china/install-go1.6-from-source-on-centos7-in-china.md)
+- [2] [Install Go1.6 from Source on CentOS 7 in China](https://github.com/northbright/Notes/blob/master/Golang/china/install-go1.6-from-source-on-centos7-in-china.md)

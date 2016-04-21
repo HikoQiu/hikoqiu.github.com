@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Let's Go] 浅析goroutine和线程、进程的区别
+title: [Go细节] 浅析goroutine和线程、进程的区别
 subtitle:   
 author: Hiko  
 category: tech  
@@ -24,7 +24,7 @@ lang: zh
 	- 2.2 协作式( goroutine ) 
 - 3\. 相关开销
 	- 3.1 内存(栈)
-	- 3.2 切换 
+	- 3.2 上下文切换 
 - 4\. 其他
 
 - - -
@@ -51,7 +51,7 @@ i. 代码片段(1.1代码片段与1.2代码片段一样)
 
 	for {}
 	
-> 备注：关于如何获取goroutine的id，见另一篇文：[`获取 goroutine id`](/posts/zh/2016/04/huoqugoroutine_id_tech.html)
+> 备注：关于如何获取goroutine的id，见另一篇文：[`《获取 goroutine id》`](/posts/zh/2016/04/huoqugoroutine_id_tech.html)
 
 ii. 编译运行结果**卡在主协程的 for{} 死循环，其他子协程都无法被 Go runtime 调度器分配到处理器(P)去执行**。
 
@@ -182,6 +182,12 @@ ii. 编译运行结果(截取其中的一小片段)
 
 ### 2. 调度方式
 
+
+
+Processes are managed by kernel.
+Goroutines and coroutines are managed by processes themself, and they are more lightweight than processes.
+
+
 #### 2.1 抢占式( 进程/线程 )
 
 #### 2.2 协作式( goroutine )
@@ -196,7 +202,52 @@ ii. 编译运行结果(截取其中的一小片段)
 
 ##### 3.1.3 goroutine
 
-#### 3.2 切换开销
+At least with the gc toolchain, a goroutine really just 
+has two values: a stack pointer and a pointer to the g structure. 
+Switching to a new goroutine is just a matter of a few instructions. 
+
+
+> How is it possible Go supports 100k+ concurrent goroutines on a single CPU, 
+> doing context switching between all of them without large overhead? 
+
+If all 100k goroutines are actively doing things in parallel, the Go 
+code will tend to have significant overhead.  In a normal Go program, 
+though, each goroutine will be waiting for network input. 
+
+
+> We all know it is a bad idea for a (C, Java) program to create thousands of 
+> OS threads (e.g. one thread per request). This is mainly because: 
+> 
+> 1. Each thread uses fixed amount of memory for its stack 
+>     (while in Go, the stack grows and shrinks as needed) 
+> 
+> 2. With many threads, the overhead of context switching becomes significant 
+>     (isn't this true in Go as well?) 
+
+The context of a goroutine is much smaller and easier to change than 
+the context of an OS thread.  If nothing else an OS thread has a 
+signal mask.  At least with the gc toolchain, a goroutine really just 
+has two values: a stack pointer and a pointer to the g structure. 
+Switching to a new goroutine is just a matter of a few instructions. 
+
+Also goroutines do cooperative scheduling and threads do not. 
+
+
+> Even if Go context-switched only on IO and channel access, doesn't it still 
+> have to save and restore the state of variables for each goroutine? How is 
+> it possible it is so efficient compared to an OS scheduler? 
+
+It does not have to save and restore each variable.  All goroutines 
+see the same global variables, and local variables are always accessed 
+via the stack pointer. 
+
+[Context switch](https://groups.google.com/forum/#!msg/golang-nuts/j51G7ieoKh4/wxNaKkFEfvcJ)
+
+#### 3.2 上下文切换
+
+https://groups.google.com/forum/#!topic/golang-nuts/0Szdmmy22pk
+
+[Performance without the event loop](http://dave.cheney.net/2015/08/08/performance-without-the-event-loop)
 
 ##### 3.2.1 进程
 
@@ -204,10 +255,21 @@ ii. 编译运行结果(截取其中的一小片段)
 
 ##### 3.2.3 goroutine
 
+Goroutines
+
+They're called goroutines because the existing terms—threads, coroutines, processes, and so on—convey inaccurate connotations. A goroutine has a simple model: it is a function executing concurrently with other goroutines in the same address space. It is lightweight, costing little more than the allocation of stack space. And the stacks start small, so they are cheap, and grow by allocating (and freeing) heap storage as required.
+
+Goroutines are multiplexed onto multiple OS threads so if one should block, such as while waiting for I/O, others continue to run. Their design hides many of the complexities of thread creation and management.
+
 
 ### 4. 其他
 
 ### 参考
 
+- [Concurrency, Goroutines and GOMAXPROCS](https://www.goinggo.net/2014/01/concurrency-goroutines-and-gomaxprocs.html)
+- [How do goroutine work or goroutines and os threads relation](http://stackoverflow.com/questions/24599645/how-do-goroutines-work-or-goroutines-and-os-threads-relation)
+- [Why 1000 goroutine generate 1000 os threads?](https://groups.google.com/forum/#!topic/golang-nuts/2IdA34yR8gQ)
+- [Goroutine vs OS threads](https://groups.google.com/forum/#!msg/golang-nuts/j51G7ieoKh4/wxNaKkFEfvcJ)
+- [goroutines](https://golang.org/doc/effective_go.html#goroutines)
 - [Why is a goroutines stack infinite ?](http://dave.cheney.net/2013/06/02/why-is-a-goroutines-stack-infinite)
 - [How stacks are handled in go ?](https://blog.cloudflare.com/how-stacks-are-handled-in-go/)
