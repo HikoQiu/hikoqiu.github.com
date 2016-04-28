@@ -5,7 +5,7 @@ title: [假如生活] 满脑子vomit
 subtitle:   
 author: Hiko  
 category: daily
-tags:   
+tags: 聚会, 喝多, 孤独  
 ctime: 2016-04-28 19:01:40  
 lang: zh  
 
