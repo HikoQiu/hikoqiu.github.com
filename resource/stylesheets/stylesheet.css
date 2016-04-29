@@ -135,6 +135,10 @@ a {
   .project-tagline {
     font-size: 1rem; } }
 
+.main-content {
+  line-height: 1.7em;
+}
+
 .main-content :first-child {
   margin-top: 0; }
 .main-content img {
@@ -236,14 +240,16 @@ a {
 
 @media screen and (min-width: 64em) {
   .main-content {
-    max-width: 64rem;
+    max-width: 55rem;
     padding: 2rem 6rem;
     margin: 0 auto;
     font-size: 1.1rem; } }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .main-content {
-    padding: 2rem 4rem;
+    max-width: 53rem;
+    margin: 0 auto;
+    padding: 2rem 6rem;
     font-size: 1.1rem; } }
 
 @media screen and (max-width: 42em) {
