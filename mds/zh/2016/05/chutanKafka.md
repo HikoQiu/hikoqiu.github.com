@@ -5,7 +5,7 @@ title: [Kafka]初探 Kafka
 subtitle:   
 author: Hiko  
 category: tech
-tags:   
+tags: kafka, demo  
 ctime: 2016-05-17 09:10:04  
 lang: zh  
 
@@ -116,7 +116,8 @@ Kafaka 使用了Zookeeper，所以在启动Kafka之前需要先启动Zookeeper�
 
 查看 Topic 列表
 
-> bin/kafka-topics.sh --list --zookeeper localhost:2181
+> bin/kafka-topics.sh --list --zookeeper localhost:2181  
+
 test
 
 备注：我们也可以设置成当往一个Topic写消息的时，如果该Topic不存在，则自动创建Topic.
@@ -126,16 +127,18 @@ test
 使用命令行客户端进行发消息，每行一条消息。
 
 > bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
-This is a message
-This is another message
+
+This is a message  
+This is another message  
 
 #### 5: 启动一个 Consumer
 
 使用命令行客户端进行消费消息，消息会自动以标准处输出打印在命令行。
 
 > bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
-This is a message
-This is another message
+
+This is a message    
+This is another message   
 
 
 #### 6: 设置多个 Broker 的集群
@@ -143,29 +146,32 @@ This is another message
 启动耽搁 Broker 就是一个只有一个只有一个节点的集群。配置多个节点的集群也不费劲，以下是在单台主机下、启用多个端口进行模拟多个 Borker 的集群。
 
 ##### 6.1 从之前的配置中复制多两份并修改端口和日志路径
-> cp config/server.properties config/server-1.properties
+> cp config/server.properties config/server-1.properties  
 > cp config/server.properties config/server-2.properties
 
 修改配置 (因为现在是在单台服务器，端口不能冲突、日志路径不要相同导致不同的 Broker 覆盖了其他 Broker的内容)
-config/server-1.properties:
-    broker.id=1
-    port=9093
-    log.dir=/tmp/kafka-logs-1
+config/server-1.properties:  
+    broker.id=1  
+    port=9093  
+    log.dir=/tmp/kafka-logs-1  
 
-config/server-2.properties:
-    broker.id=2
-    port=9094
-    log.dir=/tmp/kafka-logs-2
+config/server-2.properties:  
+    broker.id=2  
+    port=9094  
+    log.dir=/tmp/kafka-logs-2  
     
-The broker.id property is the unique and permanent name of each node in the cluster.
+The broker.id property is the unique and permanent name of each node in the cluster.  
 备注: broker.id 字段是该 broker 在该集群的唯一标记以及名字。
 
 
 #### 6.2 启动两台新的 Kafka Server
-> bin/kafka-server-start.sh config/server-1.properties &
-...
-> bin/kafka-server-start.sh config/server-2.properties &
-...
+> bin/kafka-server-start.sh config/server-1.properties &  
+
+...  
+
+> bin/kafka-server-start.sh config/server-2.properties &  
+
+...  
 
 ##### 6.3 创建一个复制因子为 3 的Topic (高可用)
 > bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic my-replicated-topic

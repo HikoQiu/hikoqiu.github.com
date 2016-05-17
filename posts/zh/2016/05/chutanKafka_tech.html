@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>[Kafka]初探 Kafka - Hiko.im</title>
     <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
-    <!--HiBlog-[Kafka]初探 Kafka`Hiko`2016-05-17 09:10:04``tech`zh-HiBlog--><!-- meta data for index -->
+    <!--HiBlog-[Kafka]初探 Kafka`Hiko`2016-05-17 09:10:04`kafka, demo`tech`zh-HiBlog--><!-- meta data for index -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
     <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
@@ -23,7 +23,7 @@
 
     <section class="page-header">
         <h1 class="project-name">[Kafka]初探 Kafka</h1>
-        <h2 class="project-tagline">by Hiko / </h2>
+        <h2 class="project-tagline">by Hiko / kafka, demo</h2>
     </section>
 
     <section class="main-content">
@@ -153,9 +153,10 @@ Parition是物理上的概念，每个Topic包含一个或多个Partition.</p></
 <p>查看 Topic 列表</p>
 
 <blockquote>
-  <p>bin/kafka-topics.sh --list --zookeeper localhost:2181
-  test</p>
+  <p>bin/kafka-topics.sh --list --zookeeper localhost:2181  </p>
 </blockquote>
+
+<p>test</p>
 
 <p>备注：我们也可以设置成当往一个Topic写消息的时，如果该Topic不存在，则自动创建Topic.</p>
 
@@ -164,20 +165,22 @@ Parition是物理上的概念，每个Topic包含一个或多个Partition.</p></
 <p>使用命令行客户端进行发消息，每行一条消息。</p>
 
 <blockquote>
-  <p>bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
-  This is a message
-  This is another message</p>
+  <p>bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test</p>
 </blockquote>
+
+<p>This is a message<br />
+This is another message  </p>
 
 <h4>5: 启动一个 Consumer</h4>
 
 <p>使用命令行客户端进行消费消息，消息会自动以标准处输出打印在命令行。</p>
 
 <blockquote>
-  <p>bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
-  This is a message
-  This is another message</p>
+  <p>bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning</p>
 </blockquote>
+
+<p>This is a message<br />
+This is another message   </p>
 
 <h4>6: 设置多个 Broker 的集群</h4>
 
@@ -186,32 +189,37 @@ Parition是物理上的概念，每个Topic包含一个或多个Partition.</p></
 <h5>6.1 从之前的配置中复制多两份并修改端口和日志路径</h5>
 
 <blockquote>
-  <p>cp config/server.properties config/server-1.properties
+  <p>cp config/server.properties config/server-1.properties<br />
   cp config/server.properties config/server-2.properties</p>
 </blockquote>
 
 <p>修改配置 (因为现在是在单台服务器，端口不能冲突、日志路径不要相同导致不同的 Broker 覆盖了其他 Broker的内容)
-config/server-1.properties:
-    broker.id=1
-    port=9093
-    log.dir=/tmp/kafka-logs-1</p>
+config/server-1.properties:<br />
+    broker.id=1<br />
+    port=9093<br />
+    log.dir=/tmp/kafka-logs-1  </p>
 
-<p>config/server-2.properties:
-    broker.id=2
-    port=9094
-    log.dir=/tmp/kafka-logs-2</p>
+<p>config/server-2.properties:<br />
+    broker.id=2<br />
+    port=9094<br />
+    log.dir=/tmp/kafka-logs-2  </p>
 
-<p>The broker.id property is the unique and permanent name of each node in the cluster.
+<p>The broker.id property is the unique and permanent name of each node in the cluster.<br />
 备注: broker.id 字段是该 broker 在该集群的唯一标记以及名字。</p>
 
 <h4>6.2 启动两台新的 Kafka Server</h4>
 
 <blockquote>
-  <p>bin/kafka-server-start.sh config/server-1.properties &amp;
-  ...
-  bin/kafka-server-start.sh config/server-2.properties &amp;
-  ...</p>
+  <p>bin/kafka-server-start.sh config/server-1.properties &amp;  </p>
 </blockquote>
+
+<p>...  </p>
+
+<blockquote>
+  <p>bin/kafka-server-start.sh config/server-2.properties &amp;  </p>
+</blockquote>
+
+<p>...  </p>
 
 <h5>6.3 创建一个复制因子为 3 的Topic (高可用)</h5>
 
