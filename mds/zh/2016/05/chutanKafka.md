@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [Kafka]初探 Kafka  
+title: [Kafka] 初探 Kafka  
 subtitle:   
 author: Hiko  
 category: tech
