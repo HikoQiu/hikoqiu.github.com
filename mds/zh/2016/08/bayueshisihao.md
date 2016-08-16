@@ -5,7 +5,7 @@ title: [随记] 八月十四号
 subtitle:   
 author: Hiko  
 category: daily
-tags:   
+tags: 随记, 日记  
 ctime: 2016-08-14 07:01:05  
 lang: zh  
 
