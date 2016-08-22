@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[OPS] Supervisor使用 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[OPS] Supervisor使用`Hiko`2016-08-22 11:32:44`运维, Supervisor`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[OPS] Supervisor使用</h1>
+        <h2 class="project-tagline">by Hiko / 运维, Supervisor</h2>
+    </section>
+
+    <section class="main-content">
+        <div><p>Supervisor是一个进程监控程序。</p>
+
+<h4>需求一</h4>
+
+<p>有一个进程需要每时每刻不断的跑，但是这个进程又有可能由于各种原因有可能中断。当进程中断的时候希望能自动重新启动它，此时，就需要使用到 <code>Supervisor</code>.</p>
+
+<p>两个命令: </p>
+
+<p>```
+supervisord : supervisor的服务器端部分，启动supervisor就是运行这个命令   </p>
+
+<p>supervisorctl：启动supervisor的命令行窗口。
+```</p>
+
+<h4>需求二</h4>
+
+<p><code>redis-server</code> 这个进程是运行 <code>redis</code> 的服务。我们要求这个服务能在意外停止后自动重启,安装()Centos下).</p>
+
+<blockquote>
+  <p>yum install Python-setuptools 
+  easy_install supervisor </p>
+</blockquote>
+
+<p>测试是否安装成功： </p>
+
+<blockquote>
+  <p>echo<em>supervisord</em>conf </p>
+</blockquote>
+
+<p>创建配置文件： </p>
+
+<blockquote>
+  <p>sudo su #切换到root用户，不然提示无权限<br />
+  echo<em>supervisord</em>conf > /etc/supervisord.conf </p>
+</blockquote>
+
+<p>修改配置文件, 在supervisord.conf最后增加：</p>
+
+<p>```
+[program:redis]
+command = redis-server   //需要执行的命令<br />
+autostart=true    //supervisor启动的时候是否随着同时启动<br />
+autorestart=true   //当程序跑出exit的时候，这个program会自动重启<br />
+startsecs=3  //程序重启时候停留在runing状态的秒数  </p>
+
+<p>（更多配置说明请参考：http://supervisord.org/configuration.html）
+```</p>
+
+<p>运行命令： </p>
+
+<blockquote>
+  <p>supervisord //启动supervisor<br />
+  supervisorctl//打开命令行 
+  结果： 
+  redis RUNNING pid 24068, uptime 3:41:55</p>
+</blockquote>
+
+<p>ctl中： help //查看命令
+ctl中： status //查看状态</p>
+
+<p>遇到的问题：</p>
+
+<p>```
+Q: redis出现的不是running而是FATAL 状态 
+A: 应该要去查看log，log在/tmp/supervisord.log</p>
+
+<p>Q: 日志中显示：gave up: redis entered FATAL state, too many start retries too quickly 
+A: 修改redis.conf的daemonize为no 
+具体说明：http://xingqiba.sinaapp.com/?p=240 
+事实证明webdis也有这个问题，webdis要修改的是webdis.json这个配置文件
+```</p>
+
+<p>完成验证：</p>
+
+<p>```
+ps aux | grep redis 
+[root@vm1~]# ps aux | grep redis 
+root 30582 0.0 0.0 9668 1584 ? S 14:12 0:00 redis-server</p>
+
+<p>kill 30582</p>
+
+<p>[root@vm1 ~]# ps aux | grep redis 
+root 30846 0.0 0.0 9668 1552 ? S 15:19 0:00 redis-server
+```</p>
+</div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>
