@@ -35,11 +35,10 @@
 
 <p>两个命令: </p>
 
-<p>```
-supervisord : supervisor的服务器端部分，启动supervisor就是运行这个命令   </p>
+<pre><code>supervisord : supervisor的服务器端部分，启动supervisor就是运行这个命令   
 
-<p>supervisorctl：启动supervisor的命令行窗口。
-```</p>
+supervisorctl：启动supervisor的命令行窗口。
+</code></pre>
 
 <h4>需求二</h4>
 
@@ -65,52 +64,50 @@ supervisord : supervisor的服务器端部分，启动supervisor就是运行这�
 
 <p>修改配置文件, 在supervisord.conf最后增加：</p>
 
-<p>```
-[program:redis]
-command = redis-server   //需要执行的命令<br />
-autostart=true    //supervisor启动的时候是否随着同时启动<br />
-autorestart=true   //当程序跑出exit的时候，这个program会自动重启<br />
-startsecs=3  //程序重启时候停留在runing状态的秒数  </p>
+<pre><code>[program:redis]
+command = redis-server   //需要执行的命令  
+autostart=true    //supervisor启动的时候是否随着同时启动  
+autorestart=true   //当程序跑出exit的时候，这个program会自动重启  
+startsecs=3  //程序重启时候停留在runing状态的秒数  
 
-<p>（更多配置说明请参考：http://supervisord.org/configuration.html）
-```</p>
+（更多配置说明请参考：http://supervisord.org/configuration.html）
+</code></pre>
 
 <p>运行命令： </p>
 
 <blockquote>
   <p>supervisord //启动supervisor<br />
-  supervisorctl//打开命令行 
-  结果： 
-  redis RUNNING pid 24068, uptime 3:41:55</p>
+  supervisorctl//打开命令行 </p>
 </blockquote>
+
+<p>结果： 
+redis RUNNING pid 24068, uptime 3:41:55</p>
 
 <p>ctl中： help //查看命令
 ctl中： status //查看状态</p>
 
 <p>遇到的问题：</p>
 
-<p>```
-Q: redis出现的不是running而是FATAL 状态 
-A: 应该要去查看log，log在/tmp/supervisord.log</p>
+<pre><code>Q: redis出现的不是running而是FATAL 状态 
+A: 应该要去查看log，log在/tmp/supervisord.log
 
-<p>Q: 日志中显示：gave up: redis entered FATAL state, too many start retries too quickly 
+Q: 日志中显示：gave up: redis entered FATAL state, too many start retries too quickly 
 A: 修改redis.conf的daemonize为no 
 具体说明：http://xingqiba.sinaapp.com/?p=240 
 事实证明webdis也有这个问题，webdis要修改的是webdis.json这个配置文件
-```</p>
+</code></pre>
 
 <p>完成验证：</p>
 
-<p>```
-ps aux | grep redis 
-[root@vm1~]# ps aux | grep redis 
-root 30582 0.0 0.0 9668 1584 ? S 14:12 0:00 redis-server</p>
+<pre><code>ps aux | grep redis 
+[root@cloud.com~]# ps aux | grep redis 
+root 30582 0.0 0.0 9668 1584 ? S 14:12 0:00 redis-server
 
-<p>kill 30582</p>
+kill 30582
 
-<p>[root@vm1 ~]# ps aux | grep redis 
+[root@cloud.com ~]# ps aux | grep redis 
 root 30846 0.0 0.0 9668 1552 ? S 15:19 0:00 redis-server
-```</p>
+</code></pre>
 </div>
 
         <br/>

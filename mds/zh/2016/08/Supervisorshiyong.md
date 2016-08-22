@@ -19,11 +19,10 @@ Supervisor是一个进程监控程序。
 
 两个命令: 
 
-```
-supervisord : supervisor的服务器端部分，启动supervisor就是运行这个命令   
+	supervisord : supervisor的服务器端部分，启动supervisor就是运行这个命令   
 
-supervisorctl：启动supervisor的命令行窗口。
-```
+	supervisorctl：启动supervisor的命令行窗口。
+
 
 ####需求二
 
@@ -41,19 +40,18 @@ supervisorctl：启动supervisor的命令行窗口。
 
 修改配置文件, 在supervisord.conf最后增加：
 
-```
-[program:redis]
-command = redis-server   //需要执行的命令  
-autostart=true    //supervisor启动的时候是否随着同时启动  
-autorestart=true   //当程序跑出exit的时候，这个program会自动重启  
-startsecs=3  //程序重启时候停留在runing状态的秒数  
+	[program:redis]
+	command = redis-server   //需要执行的命令  
+	autostart=true    //supervisor启动的时候是否随着同时启动  
+	autorestart=true   //当程序跑出exit的时候，这个program会自动重启  
+	startsecs=3  //程序重启时候停留在runing状态的秒数  
 
-（更多配置说明请参考：http://supervisord.org/configuration.html）
-```
+	（更多配置说明请参考：http://supervisord.org/configuration.html）
 
 运行命令： 
 > supervisord //启动supervisor  
 > supervisorctl//打开命令行 
+
 结果： 
 redis RUNNING pid 24068, uptime 3:41:55
 
@@ -62,25 +60,22 @@ ctl中： status //查看状态
 
 遇到的问题：
 
-```
-Q: redis出现的不是running而是FATAL 状态 
-A: 应该要去查看log，log在/tmp/supervisord.log
+	Q: redis出现的不是running而是FATAL 状态 
+	A: 应该要去查看log，log在/tmp/supervisord.log
 
-Q: 日志中显示：gave up: redis entered FATAL state, too many start retries too quickly 
-A: 修改redis.conf的daemonize为no 
-具体说明：http://xingqiba.sinaapp.com/?p=240 
-事实证明webdis也有这个问题，webdis要修改的是webdis.json这个配置文件
-```
+	Q: 日志中显示：gave up: redis entered FATAL state, too many start retries too quickly 
+	A: 修改redis.conf的daemonize为no 
+	具体说明：http://xingqiba.sinaapp.com/?p=240 
+	事实证明webdis也有这个问题，webdis要修改的是webdis.json这个配置文件
+
 
 完成验证：
 
-```
-ps aux | grep redis 
-[root@vm1~]# ps aux | grep redis 
-root 30582 0.0 0.0 9668 1584 ? S 14:12 0:00 redis-server
+	ps aux | grep redis 
+	[root@cloud.com~]# ps aux | grep redis 
+	root 30582 0.0 0.0 9668 1584 ? S 14:12 0:00 redis-server
 
-kill 30582
+	kill 30582
 
-[root@vm1 ~]# ps aux | grep redis 
-root 30846 0.0 0.0 9668 1552 ? S 15:19 0:00 redis-server
-```
+	[root@cloud.com ~]# ps aux | grep redis 
+	root 30846 0.0 0.0 9668 1552 ? S 15:19 0:00 redis-server
