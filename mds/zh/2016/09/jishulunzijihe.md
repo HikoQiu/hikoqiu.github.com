@@ -34,6 +34,13 @@ lang: zh
 
 - [Protocol-buffers](https://developers.google.com/protocol-buffers/) - Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler. 
 
+## DB
+
+- [influxdb](https://github.com/influxdata/influxdb) - An Open-Source Time Series Database.
+
+> InfluxDB is an open source time series database with no external dependencies. It's useful for recording metrics, events, and performing analytics.
+
+
 
 ## Network Tools
 
