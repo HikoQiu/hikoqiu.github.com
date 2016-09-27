@@ -4,7 +4,7 @@ layout: post
 title: [TOOL] iptables命令集合  
 subtitle:   
 author: Hiko  
-category: daily
+category: tech
 tags: iptables, Centos, 端口  
 ctime: 2016-09-23 15:14:24  
 lang: zh  
