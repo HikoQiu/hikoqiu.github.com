@@ -20,9 +20,6 @@ lang: zh
 
 - [Kafka](http://kafka.apache.org/) - Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.
 
-- [Open-Falcon](http://open-falcon.org/) - 互联网企业级监控系统解决方案。
-
-- [SaltStack](https://saltstack.com) - Automation for enterprise IT ops, event-driven data center orchestration and the most flexible configuration management for DevOps at scale.
 
 ## Programming
 
@@ -58,5 +55,24 @@ lang: zh
 > *Logstash* - Collect, Enrich & Transport Data.
 > *Elasticsearch* - Search & Analyze Data in Real Time
 > *Kibana* - Explore & Visualize Your Data
+
+- [Ansible](https://www.ansible.com/) - sinple IT automation.
+> Deploy apps. Manage systems. Crush complexity.
+Ansible helps you build a strong foundation for DevOps.
+
+````
+eg:
+
+ansible -i ./hosts test -u {user_name} -s -m shell -a 'wget http://hostname/wonder.sh -O -|bash'
+
+````
+
+- [SaltStack](https://saltstack.com/)
+> Automation for enterprise IT ops, event-driven data center orchestration and the most flexible configuration management for DevOps at scale.
+
+- [Open-Falcon](http://open-falcon.org/) - 互联网企业级监控系统解决方案。
+
+- [Supervisor](http://www.supervisord.org/) - A Process Control System
+> Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.
 
 
