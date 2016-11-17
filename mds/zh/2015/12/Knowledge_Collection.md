@@ -87,4 +87,10 @@ lang: en
 
 
 
+### Nginx Module Development
+
+[Emiller's Guide To Nginx Module Development](http://www.evanmiller.org/nginx-modules-guide.html)
+
+
+
 
