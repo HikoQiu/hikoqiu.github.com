@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: 十一月十三号  
+title: [随记] 十一月十三号  
 subtitle:   
 author: Hiko  
 category: daily
