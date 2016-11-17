@@ -1,7 +1,7 @@
 ---
 
 layout: post  
-title: [随记] 十二月二号  
+title: [随记] 十一月二号  
 subtitle:   
 author: Hiko  
 category: daily
