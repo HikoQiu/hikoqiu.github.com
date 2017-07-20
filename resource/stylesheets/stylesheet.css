@@ -10,7 +10,7 @@ body {
   color: #3b3b3b; }
 
 a {
-    color: #0064a8;
+    color: #0562D7;
     text-decoration: none; }
   a:hover {
     text-decoration: underline; }
@@ -151,11 +151,15 @@ a {
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {
-  padding: 2px 4px;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 1rem;
-  color: #383e41;
-  background-color: #f3f6fa;
+  /*padding: 2px 4px;*/
+  /*font-size: 1rem;*/
+  padding: 3px 5px;
+  margin: 0 1px;
+  line-height: 0em;
+  font-size: 0.8em;
+  background-color: #469edd;
+  color: #fff;
   border-radius: 0.2rem; }
 .main-content pre {
   padding: 0.8rem;
