@@ -11,5 +11,5 @@ fi
 
 $PHP $PATH_TOOL/php/index.php >> $logfile
 
-cat $logfile
+#cat $logfile
 echo "[+] 索引完成!"

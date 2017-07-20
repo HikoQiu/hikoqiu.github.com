@@ -207,8 +207,9 @@ class HiBlog {
      */
     public function parsePostMd($filename) {
         $params = $this->parseMdToParams($filename);
-        $body = Markdown::defaultTransform($params['body']);
-        
+        //$body = Markdown::defaultTransform($params['body']);
+        $body = (new Parser())->makeHtml($params['body']);
+
         // 2.1 set to html tpl
         $repData = [
             '{$title}' => $params['title'],

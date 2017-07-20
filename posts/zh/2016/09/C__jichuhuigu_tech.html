@@ -27,11 +27,7 @@
     </section>
 
     <section class="main-content">
-        <div><h4>0.0 类和结构</h4>
-
-<h5>0.1 struct</h5>
-
-<pre><code>// C++ 还保留了 struct
+        <div><h4>0.0 类和结构</h4><h5>0.1 struct</h5><pre><code>// C++ 还保留了 struct
 // 功能跟class类似,只是struct默认是pulic, class默认是private  
 
 typedef struct StuStruct {
@@ -42,13 +38,9 @@ typedef struct StuStruct {
 } Stus;
 
 void Stus::info() {
-    printf("in info, name : %s, age : %d\n", this-&gt;name, this-&gt;age);
+    printf(&quot;in info, name : %s, age : %d\n&quot;, this-&gt;name, this-&gt;age);
 }
-</code></pre>
-
-<h5>0.2 class</h5>
-
-<pre><code>class People {
+</code></pre><h5>0.2 class</h5><pre><code>class People {
 protected:
     char *name;
     int age;
@@ -60,7 +52,7 @@ public:
 };
 
 People::People() {
-    this-&gt;name = "def name";
+    this-&gt;name = &quot;def name&quot;;
     this-&gt;age = 0;
 }
 
@@ -68,11 +60,8 @@ People::People(char *name, int age) {
     this-&gt;name = name;
     this-&gt;age = age;
 }
-</code></pre>
 
-<h5>0.3 class 继承</h5>
-
-<pre><code>class Student : public People {
+</code></pre><h5>0.3 class 继承</h5><pre><code>class Student : public People {
 protected:
     int score;
 
@@ -91,38 +80,26 @@ Student::Student() {
 // 冒号前面是派生类构造函数的头部，这和我们以前介绍的构造函数的形式一样，
 // 但它的形参列表包括了初始化基类和派生类的成员变量所需的数据；
 // 冒号后面是对基类构造函数的调用，这和普通构造函数的参数初始化表非常类似。
-Student::Student(char *name1, int age1, int score1) :   People(name1, age1), score(score1) { }
+Student::Student(char *name1, int age1, int score1) :     People(name1, age1), score(score1) { }
 
 void Student::info() {
     // age 可以不加this
-    cout &lt;&lt; "name: " &lt;&lt; this-&gt;name &lt;&lt; " \n age :" &lt;&lt; age &lt;&lt; "\n score : " &lt;&lt; this-&gt;score &lt;&lt; endl;
+    cout &lt;&lt; &quot;name: &quot; &lt;&lt; this-&gt;name &lt;&lt; &quot; \n age :&quot; &lt;&lt; age &lt;&lt; &quot;\n score : &quot; &lt;&lt; this-&gt;score &lt;&lt; endl;
 }
 
 int main() {
     Student stu;
     stu.info();
 
-    Student stu2("HikoQiu", 27, 99);
+    Student stu2(&quot;HikoQiu&quot;, 27, 99);
     stu2.info();
     Student::info();
     std::string();
-    cout &lt;&lt; "hello world" &lt;&lt; endl;
+    cout &lt;&lt; &quot;hello world&quot; &lt;&lt; endl;
 
     return 0;
 }
-</code></pre>
-
-<p>实际上，对象(派生类赋值给父类)之间的赋值是成员变量的赋值，成员函数不存在赋值问题。在赋值时，会舍弃派生类自己的成员，也就是”大材小用“.</p>
-
-<p>基类对象和派生类对象之间的赋值仅仅是对应的成员变量的赋值，不会影响成员函数，不会影响 this 指针。</p>
-
-<p>成员变量和成员函数不在同一个内存区域，系统通过 this 指针来访问成员变量，但是却不通过它来访问成员函数。</p>
-
-<p>系统通过对象的类型来访问成员函数。例如 p 的类型是 A，那么不管 p 指向哪个对象，都访问 A 类的成员函数。</p>
-
-<h5>0.4 virtual class</h5>
-
-<pre><code>class A {
+</code></pre><p>实际上，对象(派生类赋值给父类)之间的赋值是成员变量的赋值，成员函数不存在赋值问题。在赋值时，会舍弃派生类自己的成员，也就是”大材小用“.</p><p>基类对象和派生类对象之间的赋值仅仅是对应的成员变量的赋值，不会影响成员函数，不会影响 this 指针。</p><p>成员变量和成员函数不在同一个内存区域，系统通过 this 指针来访问成员变量，但是却不通过它来访问成员函数。</p><p>系统通过对象的类型来访问成员函数。例如 p 的类型是 A，那么不管 p 指向哪个对象，都访问 A 类的成员函数。</p><h5>0.4 virtual class</h5><pre><code>class A {
 protected:
     int a;
 public:
@@ -168,16 +145,16 @@ public:
 };
 
 void D::display() {
-//    cout &lt;&lt; "a:" &lt;&lt; a &lt;&lt; endl; // 如果没有使用virtual :  error: non-static member 'a' found in multiple base-class subobjects of type 'A':
-//    cout &lt;&lt; "a:" &lt;&lt; B::a &lt;&lt; endl; // 如果没有使用virtual, 需要这样使用
+//    cout &lt;&lt; &quot;a:&quot; &lt;&lt; a &lt;&lt; endl; // 如果没有使用virtual :  error: non-static member 'a' found in multiple base-class subobjects of type 'A':
+//    cout &lt;&lt; &quot;a:&quot; &lt;&lt; B::a &lt;&lt; endl; // 如果没有使用virtual, 需要这样使用
 //    cout &lt;&lt; this-&gt;B::a&lt;&lt;endl;
 
     // 加了virtual 虚基类, 就不会由于多重继承 A 而导致 D 中有多个 a 字段, 所以不用像
     // 上面的方式加类名和域解析符(B::a)
-    cout &lt;&lt; "a : " &lt;&lt; this-&gt;a &lt;&lt; endl;
-    cout &lt;&lt; "b : " &lt;&lt; this-&gt;b &lt;&lt; endl;
-    cout &lt;&lt; "c : " &lt;&lt; this-&gt;c &lt;&lt; endl;
-    cout &lt;&lt; "d : "  &lt;&lt; this-&gt;d &lt;&lt; endl;
+    cout &lt;&lt; &quot;a : &quot; &lt;&lt; this-&gt;a &lt;&lt; endl;
+    cout &lt;&lt; &quot;b : &quot; &lt;&lt; this-&gt;b &lt;&lt; endl;
+    cout &lt;&lt; &quot;c : &quot; &lt;&lt; this-&gt;c &lt;&lt; endl;
+    cout &lt;&lt; &quot;d : &quot;  &lt;&lt; this-&gt;d &lt;&lt; endl;
 }
 
 int main() {
@@ -187,13 +164,8 @@ int main() {
 
     return 0;
 }
-</code></pre>
-
-<h4>1.0 重载</h4>
-
-<h5>1.1 操作符重载 (1)</h5>
-
-<pre><code>class complex {
+</code></pre><h4>1.0 重载</h4><h5>1.1 操作符重载 (1)</h5><pre><code>
+class complex {
 private:
     double real, imag;
 public:
@@ -221,17 +193,15 @@ complex complex::operator+(const complex &amp;a) const {
 }
 
 void complex::info() {
-    cout &lt;&lt; "real: " &lt;&lt; real &lt;&lt; " imag: " &lt;&lt; imag &lt;&lt; endl;
+    cout &lt;&lt; &quot;real: &quot; &lt;&lt; real &lt;&lt; &quot; imag: &quot; &lt;&lt; imag &lt;&lt; endl;
 }
 
 complex operator*(const complex &amp;a, const complex &amp;b) {
     return complex(a.real * b.real, a.imag * b.imag);
 }
+</code></pre><pre><code>int main() {
 
-
-int main() {
-
-    cout &lt;&lt; "Hello operator overload." &lt;&lt; endl;
+    cout &lt;&lt; &quot;Hello operator overload.&quot; &lt;&lt; endl;
 
     complex c1(5.4, 6.8);
     complex c2(9.9, 6.6);
@@ -242,11 +212,8 @@ int main() {
     c3.info();
     c4.info();
 }
-</code></pre>
-
-<h5>1.2 操作符重载 (2)</h5>
-
-<pre><code>class Array {
+</code></pre><h5>1.2 操作符重载 (2)</h5><pre><code>
+class Array {
 private:
     int length;
     int *num;
@@ -275,10 +242,10 @@ Array::~Array() {
     if (*num != NULL) {
         delete[]num;
     } else {
-        cout &lt;&lt; "num is NULL." &lt;&lt; endl;
+        cout &lt;&lt; &quot;num is NULL.&quot; &lt;&lt; endl;
     }
 
-    cout &lt;&lt; "~A() invoked." &lt;&lt; endl;
+    cout &lt;&lt; &quot;~A() invoked.&quot; &lt;&lt; endl;
 }
 
 Array::Array(int n) {
@@ -296,7 +263,7 @@ void  Array::free() {
 
 int &amp;Array::operator[](int i) {
     if (i &lt; 0 || i &gt;= len()) {
-        throw string("\nout of bounds.");
+        throw string(&quot;\nout of bounds.&quot;);
     }
 
     return num[i];
@@ -304,7 +271,7 @@ int &amp;Array::operator[](int i) {
 
 const int &amp;Array::operator[](int i) const {
     if (i &lt; 0 || i &gt;= length) {
-        throw string("\nout of bounds.");
+        throw string(&quot;\nout of bounds.&quot;);
     }
 
     return num[i];
@@ -321,10 +288,10 @@ int main() {
         }
 
         for (i = 0; i &lt; 6; i++) {
-            cout &lt;&lt; "index i = " &lt;&lt; i &lt;&lt; ", val: " &lt;&lt; A[i] &lt;&lt; endl;
+            cout &lt;&lt; &quot;index i = &quot; &lt;&lt; i &lt;&lt; &quot;, val: &quot; &lt;&lt; A[i] &lt;&lt; endl;
         }
     } catch (string s) {
-        cerr &lt;&lt; s &lt;&lt; ", i = " &lt;&lt; i &lt;&lt; endl;
+        cerr &lt;&lt; s &lt;&lt; &quot;, i = &quot; &lt;&lt; i &lt;&lt; endl;
         A.free();
     }
 
@@ -343,13 +310,8 @@ Book &amp; operator=( const Book &amp;b );
 赋值运算符重载函数除了能有对象引用这样的参数之外，也能有其它参数。但是其它参数必须给出默认值。如下所示：
 Book &amp; operator=(const Book &amp;b, a = 10);
  */
-</code></pre>
-
-<h4>2.0 模板</h4>
-
-<h5>2.1 模板 (1)</h5>
-
-<pre><code>class Array {
+</code></pre><h4>2.0 模板</h4><h5>2.1 模板 (1)</h5><pre><code>
+class Array {
 private:
     int length;
     int *num;
@@ -378,10 +340,10 @@ Array::~Array() {
     if (*num != NULL) {
         delete[]num;
     } else {
-        cout &lt;&lt; "num is NULL." &lt;&lt; endl;
+        cout &lt;&lt; &quot;num is NULL.&quot; &lt;&lt; endl;
     }
 
-    cout &lt;&lt; "~A() invoked." &lt;&lt; endl;
+    cout &lt;&lt; &quot;~A() invoked.&quot; &lt;&lt; endl;
 }
 
 Array::Array(int n) {
@@ -399,7 +361,7 @@ void  Array::free() {
 
 int &amp;Array::operator[](int i) {
     if (i &lt; 0 || i &gt;= len()) {
-        throw string("\nout of bounds.");
+        throw string(&quot;\nout of bounds.&quot;);
     }
 
     return num[i];
@@ -407,7 +369,7 @@ int &amp;Array::operator[](int i) {
 
 const int &amp;Array::operator[](int i) const {
     if (i &lt; 0 || i &gt;= length) {
-        throw string("\nout of bounds.");
+        throw string(&quot;\nout of bounds.&quot;);
     }
 
     return num[i];
@@ -424,10 +386,10 @@ int main() {
         }
 
         for (i = 0; i &lt; 6; i++) {
-            cout &lt;&lt; "index i = " &lt;&lt; i &lt;&lt; ", val: " &lt;&lt; A[i] &lt;&lt; endl;
+            cout &lt;&lt; &quot;index i = &quot; &lt;&lt; i &lt;&lt; &quot;, val: &quot; &lt;&lt; A[i] &lt;&lt; endl;
         }
     } catch (string s) {
-        cerr &lt;&lt; s &lt;&lt; ", i = " &lt;&lt; i &lt;&lt; endl;
+        cerr &lt;&lt; s &lt;&lt; &quot;, i = &quot; &lt;&lt; i &lt;&lt; endl;
         A.free();
     }
 
@@ -444,8 +406,7 @@ Book &amp; operator=( const Book &amp;b );
 赋值运算符重载函数除了能有对象引用这样的参数之外，也能有其它参数。但是其它参数必须给出默认值。如下所示：
 Book &amp; operator=(const Book &amp;b, a = 10);
  */
-</code></pre>
-</div>
+</code></pre></div>
 
         <br/>
         <br/>

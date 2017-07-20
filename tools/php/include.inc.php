@@ -5,6 +5,7 @@ ini_set('date.timezone','Asia/Shanghai');
 include 'HiBlog.php';
 include 'pinyin/Pinyin.php';
 include 'markdown/Markdown.inc.php';
+include 'markdown/HyperDown.php';
 
 // parse PATH vars from conf
 $conf = file_get_contents('./tools/conf');

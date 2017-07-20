@@ -27,100 +27,10 @@
     </section>
 
     <section class="main-content">
-        <div><h2>Distributed Systems</h2>
+        <div><h2>Distributed Systems</h2><ul><li><p><a href="http://zookeeper.apache.org/">Zookeeper</a>  - an effort to develop and maintain an open-source server which enables highly reliable distributed coordination.</p></li></ul><blockquote><p>ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.</p></blockquote><ul><li><p><a href="http://kafka.apache.org/">Kafka</a> - Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.</p></li></ul><h2>Programming</h2><ul><li><h3>C/C++</h3></li><li><p><a href="http://libevent.org">Libevent</a> - an event notification library.</p></li></ul><blockquote><p>The libevent API provides a mechanism to execute a callback function when a specific event occurs on a file descriptor or after a timeout has been reached. Furthermore, libevent also support callbacks due to signals or regular timeouts.</p></blockquote><ul><li><p><a href="https://developers.google.com/protocol-buffers/">Protocol-buffers</a> - Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler.</p></li></ul><h2>DB</h2><ul><li><p><a href="https://github.com/influxdata/influxdb">influxdb</a> - An Open-Source Time Series Database.</p></li></ul><blockquote><p>InfluxDB is an open source time series database with no external dependencies. It's useful for recording metrics, events, and performing analytics.</p></blockquote><h2>Network Tools</h2><ul><li><h3>HTTP benchmarking</h3></li><li><p><a href="https://github.com/wg/wrk">wrk</a>  - a HTTP benchmarking tool</p></li></ul><blockquote><p><code>wrk</code> is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.</p></blockquote><ul><li><p><a href="http://httpd.apache.org/docs/2.0/programs/ab.html">ab</a> - Apache HTTP server benchmarking tool</p></li></ul><blockquote><p><code>ab</code> is a tool for benchmarking your Apache Hypertext Transfer Protocol (HTTP) server.</p></blockquote><h2>OPS</h2><ul><li><p>ELK (<a href="https://www.elastic.co/products/elasticsearch">Elasticsearch</a> / <a href="https://www.elastic.co/products/logstash">Logstash</a> / <a href="https://www.elastic.co/products/kibana">Kibana</a>) - Real-time log analysis platform.</p></li></ul><blockquote><p><em>Logstash</em> - Collect, Enrich & Transport Data.<br><em>Elasticsearch</em> - Search & Analyze Data in Real Time<br><em>Kibana</em> - Explore & Visualize Your Data</p></blockquote><ul><li><p><a href="https://www.ansible.com/">Ansible</a> - sinple IT automation.</p></li></ul><blockquote><p>Deploy apps. Manage systems. Crush complexity.<br>Ansible helps you build a strong foundation for DevOps.</p></blockquote><pre><code>eg:
 
-<ul>
-<li><a href="http://zookeeper.apache.org/">Zookeeper</a>  - an effort to develop and maintain an open-source server which enables highly reliable distributed coordination.</li>
-</ul>
-
-<blockquote>
-  <p>ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. </p>
-</blockquote>
-
-<ul>
-<li><a href="http://kafka.apache.org/">Kafka</a> - Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.</li>
-</ul>
-
-<h2>Programming</h2>
-
-<ul>
-<li><h3>C/C++</h3></li>
-<li><p><a href="http://libevent.org">Libevent</a> - an event notification library.</p></li>
-</ul>
-
-<blockquote>
-  <p>The libevent API provides a mechanism to execute a callback function when a specific event occurs on a file descriptor or after a timeout has been reached. Furthermore, libevent also support callbacks due to signals or regular timeouts.</p>
-</blockquote>
-
-<ul>
-<li><a href="https://developers.google.com/protocol-buffers/">Protocol-buffers</a> - Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler. </li>
-</ul>
-
-<h2>DB</h2>
-
-<ul>
-<li><a href="https://github.com/influxdata/influxdb">influxdb</a> - An Open-Source Time Series Database.</li>
-</ul>
-
-<blockquote>
-  <p>InfluxDB is an open source time series database with no external dependencies. It's useful for recording metrics, events, and performing analytics.</p>
-</blockquote>
-
-<h2>Network Tools</h2>
-
-<ul>
-<li><h3>HTTP benchmarking</h3></li>
-<li><p><a href="https://github.com/wg/wrk">wrk</a>  - a HTTP benchmarking tool</p>
-
-<blockquote>
-  <p><code>wrk</code> is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.</p>
-</blockquote></li>
-<li><p><a href="http://httpd.apache.org/docs/2.0/programs/ab.html">ab</a> - Apache HTTP server benchmarking tool</p>
-
-<blockquote>
-  <p><code>ab</code> is a tool for benchmarking your Apache Hypertext Transfer Protocol (HTTP) server.</p>
-</blockquote></li>
-</ul>
-
-<h2>OPS</h2>
-
-<ul>
-<li>ELK (<a href="https://www.elastic.co/products/elasticsearch">Elasticsearch</a> / <a href="https://www.elastic.co/products/logstash">Logstash</a> / <a href="https://www.elastic.co/products/kibana">Kibana</a>) - Real-time log analysis platform.</li>
-</ul>
-
-<blockquote>
-  <p><em>Logstash</em> - Collect, Enrich &amp; Transport Data.
-  <em>Elasticsearch</em> - Search &amp; Analyze Data in Real Time
-  <em>Kibana</em> - Explore &amp; Visualize Your Data</p>
-</blockquote>
-
-<ul>
-<li><a href="https://www.ansible.com/">Ansible</a> - sinple IT automation.
-> Deploy apps. Manage systems. Crush complexity.
-Ansible helps you build a strong foundation for DevOps.</li>
-</ul>
-
-<p>````
-eg:</p>
-
-<p>ansible -i ./hosts test -u {user_name} -s -m shell -a 'wget http://hostname/wonder.sh -O -|bash'</p>
-
-<p>````</p>
-
-<ul>
-<li><p><a href="https://saltstack.com/">SaltStack</a></p>
-
-<blockquote>
-  <p>Automation for enterprise IT ops, event-driven data center orchestration and the most flexible configuration management for DevOps at scale.</p>
-</blockquote></li>
-<li><p><a href="http://open-falcon.org/">Open-Falcon</a> - 互联网企业级监控系统解决方案。</p></li>
-<li><p><a href="http://www.supervisord.org/">Supervisor</a> - A Process Control System</p>
-
-<blockquote>
-  <p>Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.</p>
-</blockquote></li>
-</ul>
-</div>
+ansible -i ./hosts test -u {user_name} -s -m shell -a 'wget http://hostname/wonder.sh -O -|bash'
+</code></pre><ul><li><p><a href="https://saltstack.com/">SaltStack</a></p></li></ul><blockquote><p>Automation for enterprise IT ops, event-driven data center orchestration and the most flexible configuration management for DevOps at scale.</p></blockquote><ul><li><p><a href="http://open-falcon.org/">Open-Falcon</a> - 互联网企业级监控系统解决方案。</p></li><li><p><a href="http://www.supervisord.org/">Supervisor</a> - A Process Control System</p></li></ul><blockquote><p>Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.</p></blockquote></div>
 
         <br/>
         <br/>

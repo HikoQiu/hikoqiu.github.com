@@ -27,273 +27,68 @@
     </section>
 
     <section class="main-content">
-        <div><h3>概览</h3>
-
-<ul>
-<li>1&#46; Slice数据结构</li>
-<li>2&#46; 使用Slice须知
-
-<ul>
-<li>2.1 值传递下的Slice</li>
-<li>2.2 Slice截取和扩充</li>
-</ul></li>
-<li>3&#46; Slice操作常用函数</li>
-<li>4&#46; 其他
-
-<ul>
-<li>4.1 关于string</li>
-<li>4.2 关于Slice nil</li>
-</ul></li>
-</ul>
-
-<hr />
-
-<blockquote>
-  <p>前言 默认你是对数组有一定的认识。</p>
-</blockquote>
-
-<h3>1. Slice数据结构</h3>
-
-<p>首先，直接从源码<code>$YOUR_GO_DIR/src/runtime/slice.go</code>（其中<code>$YOUR_GO_DIR</code>指你自己go源代码的根目录）中找到定义的<code>slice</code>结构，如下：</p>
-
-<pre><code>type slice struct {
+        <div><h3>概览</h3><ul><li><p>1. Slice数据结构</p></li><li><p>2. 使用Slice须知</p><ul><li><p>2.1 值传递下的Slice</p></li><li><p>2.2 Slice截取和扩充</p></li></ul></li><li><p>3. Slice操作常用函数</p></li><li><p>4. 其他</p><ul><li><p>4.1 关于string</p></li><li><p>4.2 关于Slice nil</p></li></ul></li><li><ul><li><p>-</p></li></ul></li></ul><blockquote><p>前言 默认你是对数组有一定的认识。</p></blockquote><h3>1. Slice数据结构</h3><p>首先，直接从源码<code>$YOUR_GO_DIR/src/runtime/slice.go</code>（其中<code>$YOUR_GO_DIR</code>指你自己go源代码的根目录）中找到定义的<code>slice</code>结构，如下：</p><pre><code>type slice struct {
     array unsafe.Pointer // 任意类型指针(类似C语言中的 void* )， 指向真实存储slice数据的数组
     len   int // length, 长度
     cap   int // capacity, 容量
 }
-</code></pre>
-
-<p>从结构很好看出，通过make()函数（比如：make([]int, 10, 20)）创建出来的slice，其实就是由两部分组成：<code>slice的"描述"(上面的结构体)</code> + <code>存储数据的数组(指针指向的数组)</code>。</p>
-
-<blockquote>
-  <p>提示：后文将使用SliceHeader代替上面的结构体，SliceHeader是<a href="https://en.wikipedia.org/wiki/Rob_Pike">Rob Pike</a>在<a href="https://blog.golang.org/slices">Golang/slices</a>这篇博文中的暂用来指代的名词，这里我也借用一下。为了方便理解，把slice拆成 SliceHeader + 存储数据的数组 两部分。</p>
-</blockquote>
-
-<h3>2. 使用Slice须知</h3>
-
-<h4>2.1 值传递下的Slice</h4>
-
-<p>我们知道Go的参数是值传递，那么这里有个问题需要考虑： <strong>当把一个slice变量通过参数传递给某函数时，传的是SliceHeader、还是整个SliceHeader+数据（存储数据的数组）都被复制过去？</strong></p>
-
-<p>比如，这样的代码：  </p>
-
-<pre><code>s := make([]string, 10)  
+</code></pre><p>从结构很好看出，通过make()函数（比如：make([]int, 10, 20)）创建出来的slice，其实就是由两部分组成：<code>slice的&quot;描述&quot;(上面的结构体)</code> + <code>存储数据的数组(指针指向的数组)</code>。</p><blockquote><p>提示：后文将使用SliceHeader代替上面的结构体，SliceHeader是<a href="https://en.wikipedia.org/wiki/Rob_Pike">Rob Pike</a>在<a href="https://blog.golang.org/slices">Golang/slices</a>这篇博文中的暂用来指代的名词，这里我也借用一下。为了方便理解，把slice拆成 SliceHeader + 存储数据的数组 两部分。</p></blockquote><h3>2. 使用Slice须知</h3><h4>2.1 值传递下的Slice</h4><p>我们知道Go的参数是值传递，那么这里有个问题需要考虑： <strong>当把一个slice变量通过参数传递给某函数时，传的是SliceHeader、还是整个SliceHeader+数据（存储数据的数组）都被复制过去？</strong></p><p>比如，这样的代码：</p><pre><code>s := make([]string, 10)  
 saveSlice(s)
-</code></pre>
-
-<p>当我们在项目中某个slice有10万元素，如果传参数直接复制<code>SliceHeader + 数据</code>，那么这是一定不能接受的。</p>
-
-<p>Rob Pike有这样一句话定义Slice: <code>slice不是数组，它是对数组进行了描述(A slice is not an array. A slice describes a piece of an array)</code>。 实际上，在上面的代码片段中saveSlice(s)接收到的是变量<code>s</code>的一个副本（就是一个值跟<code>s</code>一样，但是是全新的变量），这个副本跟变量<code>s</code>一样，有一个指向同个数组的指针、len和cap相同值。</p>
-
-<p>为什么？因为Go是值传递，简单试验就知道。</p>
-
-<p><strong>实验 1</strong>  </p>
-
-<p>假设：如果slice变量参数传递，是复制了<code>数据</code>，那么在函数中操作"被复制过来的"数据，<strong>不会</strong>对原数据造成影响。</p>
-
-<pre><code>// 代码片段
+</code></pre><p>当我们在项目中某个slice有10万元素，如果传参数直接复制<code>SliceHeader + 数据</code>，那么这是一定不能接受的。</p><p>Rob Pike有这样一句话定义Slice: <code>slice不是数组，它是对数组进行了描述(A slice is not an array. A slice describes a piece of an array)</code>。 实际上，在上面的代码片段中saveSlice(s)接收到的是变量<code>s</code>的一个副本（就是一个值跟<code>s</code>一样，但是是全新的变量），这个副本跟变量<code>s</code>一样，有一个指向同个数组的指针、len和cap相同值。</p><p>为什么？因为Go是值传递，简单试验就知道。</p><p><strong>实验 1</strong>  </p><p>假设：如果slice变量参数传递，是复制了<code>数据</code>，那么在函数中操作"被复制过来的"数据，<strong>不会</strong>对原数据造成影响。</p><pre><code>// 代码片段
 data := make([]int, 10)
-fmt.Println("处理前数据: ", data)
+fmt.Println(&quot;处理前数据: &quot;, data)
 changeIndex0(data)
-fmt.Println("处理后数据: ", data)
-</code></pre>
-
-<p>函数 changeIndex0(data []int)</p>
-
-<pre><code>// 替换第一个元素的值
+fmt.Println(&quot;处理后数据: &quot;, data)
+</code></pre><p>函数 changeIndex0(data []int)</p><pre><code>// 替换第一个元素的值
 func changeIndex0(data []int)  {
     data[0] = 99
 }
-</code></pre>
-
-<p>实验结果</p>
-
-<pre><code>处理前数据:  [0 0 0 0 0 0 0 0 0 0]
+</code></pre><p>实验结果</p><pre><code>处理前数据:  [0 0 0 0 0 0 0 0 0 0]
 处理后数据:  [99 0 0 0 0 0 0 0 0 0]
-</code></pre>
-
-<p>显然，从结果中看得出，原始数据被修改了，所以可以得出结论是：传递slice变量时，并不是复制真正存储数据的数组进行传递。</p>
-
-<p><strong>实验 2</strong></p>
-
-<p>如何证明传的是SliceHeader，并且函数所接受到的变量是一个副本？</p>
-
-<pre><code>// 代码片段
+</code></pre><p>显然，从结果中看得出，原始数据被修改了，所以可以得出结论是：传递slice变量时，并不是复制真正存储数据的数组进行传递。</p><p><strong>实验 2</strong></p><p>如何证明传的是SliceHeader，并且函数所接受到的变量是一个副本？</p><pre><code>// 代码片段
 data := make([]int, 10)
-fmt.Println("处理前数据: ", data, len(data), cap(data))
+fmt.Println(&quot;处理前数据: &quot;, data, len(data), cap(data))
 subSlice(data)
-fmt.Println("处理后数据: ", data, len(data), cap(data))
-</code></pre>
-
-<p>函数 subSlic(data []int)</p>
-
-<pre><code>// 截取slice
+fmt.Println(&quot;处理后数据: &quot;, data, len(data), cap(data))
+</code></pre><p>函数 subSlic(data []int)</p><pre><code>// 截取slice
 func subSlice(data []int)  {
     data[0] = 99
     data = data[0:8]
-    fmt.Println("函数中数据: ", data, len(data), cap(data))
+    fmt.Println(&quot;函数中数据: &quot;, data, len(data), cap(data))
 }
-</code></pre>
-
-<p>实验结果</p>
-
-<pre><code>处理前数据:  [0 0 0 0 0 0 0 0 0 0] 10 10
+</code></pre><p>实验结果</p><pre><code>处理前数据:  [0 0 0 0 0 0 0 0 0 0] 10 10
 函数中数据:  [99 0 0 0 0 0 0 0] 8 10
 处理后数据:  [99 0 0 0 0 0 0 0 0 0] 10 10
-</code></pre>
-
-<p>结果中看到函数中和处理后的slice的长度（len）不一样，显然不是同一个SliceHeader。其实也有个简单的办法，直接取两变量的地址，一看就知道。（这个实验根本就可以不用，因为Go参数传递本身就是值传递，自然会复制，不像Java的引用传递）。</p>
-
-<p>所以，在实际项目中，直接传递slice变量与传递slice变量的指针，对内存的消耗区别并不是很大。一个SliceHeader的大小是24字节，而指针大小8字节。</p>
-
-<blockquote>
-  <p>备注： SliceHeader 24字节计算方式：8字节(指针) + 8字节(整型int, len) + 8字节(整型int, cap)，这是以我自己电脑为例， 我电脑是64位，指针大小8字节；整型int大小也跟编译器有关，但Golang中最少是32bit，我在本机使用unsafe.SizeOf()实测是8字节。</p>
-</blockquote>
-
-<h4>2.2 Slice截取和扩充</h4>
-
-<p>说到底，slice由SliceHeader和数组构成。涉及到数组，避不开的问题就是<code>定长</code>，也就是一旦数组长度确定了就无法改变。如果非要改变长度，那只能一个办法：重新分配一个新的数组。</p>
-
-<p>对于slice也一样，如果一个slice已经确定了容量(capacity)，那么如果要扩充该slice的容量，也必须重新分配一个存数据的数组。</p>
-
-<blockquote>
-  <p>备注：slice的容量在使用make([]byte, 10, 20)时，第三个参数已经确定；第三个参数就是容量(capacity)，如果不指定，默认跟第二个参数（长度len）一样。</p>
-</blockquote>
-
-<h5>截取子Slice</h5>
-
-<p>当基于原Slice进行截取子Slice时，实际上操作的还是原Slice的元素。也就是对子Slice的元素进行修改，都会在原Slice中体现，从上面<code>实验2</code>中就可以看出。</p>
-
-<p>也就是，在Slice的容量(capacity)范围内子Slice截取，都是直接使用了原Slice的数组，并没有为该子Slice分配新的数组。</p>
-
-<p>如果我需要截取一个子Slice并且希望该子Slice有新的数组，该怎么操作？这是可以使用copy()函数。</p>
-
-<pre><code>sub := make([]int, 2)
+</code></pre><p>结果中看到函数中和处理后的slice的长度（len）不一样，显然不是同一个SliceHeader。其实也有个简单的办法，直接取两变量的地址，一看就知道。（这个实验根本就可以不用，因为Go参数传递本身就是值传递，自然会复制，不像Java的引用传递）。</p><p>所以，在实际项目中，直接传递slice变量与传递slice变量的指针，对内存的消耗区别并不是很大。一个SliceHeader的大小是24字节，而指针大小8字节。</p><blockquote><p>备注： SliceHeader 24字节计算方式：8字节(指针) + 8字节(整型int, len) + 8字节(整型int, cap)，这是以我自己电脑为例， 我电脑是64位，指针大小8字节；整型int大小也跟编译器有关，但Golang中最少是32bit，我在本机使用unsafe.SizeOf()实测是8字节。</p></blockquote><h4>2.2 Slice截取和扩充</h4><p>说到底，slice由SliceHeader和数组构成。涉及到数组，避不开的问题就是<code>定长</code>，也就是一旦数组长度确定了就无法改变。如果非要改变长度，那只能一个办法：重新分配一个新的数组。</p><p>对于slice也一样，如果一个slice已经确定了容量(capacity)，那么如果要扩充该slice的容量，也必须重新分配一个存数据的数组。</p><blockquote><p>备注：slice的容量在使用make([]byte, 10, 20)时，第三个参数已经确定；第三个参数就是容量(capacity)，如果不指定，默认跟第二个参数（长度len）一样。</p></blockquote><h5>截取子Slice</h5><p>当基于原Slice进行截取子Slice时，实际上操作的还是原Slice的元素。也就是对子Slice的元素进行修改，都会在原Slice中体现，从上面<code>实验2</code>中就可以看出。</p><p>也就是，在Slice的容量(capacity)范围内子Slice截取，都是直接使用了原Slice的数组，并没有为该子Slice分配新的数组。</p><p>如果我需要截取一个子Slice并且希望该子Slice有新的数组，该怎么操作？这是可以使用copy()函数。</p><pre><code>sub := make([]int, 2)
 copy(sub, data[3:5])
-</code></pre>
-
-<h5>扩充Slice</h5>
-
-<p>事实上，扩充Slice的操作就是：重新创建一个更大容量的Slice，然后把原Slice中的数据复制到新的Slice里面。</p>
-
-<p>比如：常用操作<code>append()</code></p>
-
-<pre><code>fmt.Printf("append()前: len: %d, cap: %d \n", len(data), cap(data))
+</code></pre><h5>扩充Slice</h5><p>事实上，扩充Slice的操作就是：重新创建一个更大容量的Slice，然后把原Slice中的数据复制到新的Slice里面。</p><p>比如：常用操作<code>append()</code></p><pre><code>fmt.Printf(&quot;append()前: len: %d, cap: %d \n&quot;, len(data), cap(data))
 data = append(data, 5)
-fmt.Printf("append()后: len: %d, cap: %d \n", len(data), cap(data))
-</code></pre>
-
-<p>结果</p>
-
-<pre><code>append()前: len: 10, cap: 10 
+fmt.Printf(&quot;append()后: len: %d, cap: %d \n&quot;, len(data), cap(data))
+</code></pre><p>结果</p><pre><code>append()前: len: 10, cap: 10 
 append()后: len: 11, cap: 20 
-</code></pre>
-
-<p>append()中的操作就是新建了一个容量为原来两倍的Slice，然后把原来的数据复制到新Slice并且把新的元素加上。</p>
-
-<h3>3. Slice操作常用函数</h3>
-
-<p>3.1 Go提供了方便操作的语法糖，如： data[2:5]，以此来获取第二到第四（包括第四）个元素。</p>
-
-<blockquote>
-  <p>备注： ':' 左右都可以不指定值。右边的值不可以超过该Slice的容量大小，否则会Panic。</p>
-</blockquote>
-
-<p>3.1 <code>copy()</code> 复制Slice的值到另外一个Slice，上面例子也用到了，这函数会自动参考len更小的那个Slice，不会发生爆出<code>slice bounds out of range</code>的异常。</p>
-
-<p>3.2 <code>append()</code>给某个Slice添加元素，也是常用的，上面的例子也有体现。</p>
-
-<h3>4. 其他</h3>
-
-<h4>4.1 关于string</h4>
-
-<p>从源码包<code>runtime</code>中<code>string.go</code>中可以看到字符串的struct。</p>
-
-<pre><code>type stringStruct struct {
+</code></pre><p>append()中的操作就是新建了一个容量为原来两倍的Slice，然后把原来的数据复制到新Slice并且把新的元素加上。</p><h3>3. Slice操作常用函数</h3><p>3.1 Go提供了方便操作的语法糖，如： data[2:5]，以此来获取第二到第四（包括第四）个元素。</p><blockquote><p>备注： ':' 左右都可以不指定值。右边的值不可以超过该Slice的容量大小，否则会Panic。</p></blockquote><p>3.1 <code>copy()</code> 复制Slice的值到另外一个Slice，上面例子也用到了，这函数会自动参考len更小的那个Slice，不会发生爆出<code>slice bounds out of range</code>的异常。</p><p>3.2 <code>append()</code>给某个Slice添加元素，也是常用的，上面的例子也有体现。</p><h3>4. 其他</h3><h4>4.1 关于string</h4><p>从源码包<code>runtime</code>中<code>string.go</code>中可以看到字符串的struct。</p><pre><code>type stringStruct struct {
     str unsafe.Pointer
     len int
 }
-</code></pre>
-
-<p>也就是，string实际上就是<strong>只读</strong>的byte切片(Slice)，只是从Golang语言层面提供的语法支持而已。因为只能读，所以容量的存在与否都无济于事。</p>
-
-<h4>4.2 关于Slice nil</h4>
-
-<p>我们知道<code>make()</code>方法专门用来新建Slice、map、chan，但是我们也可以用<code>new()</code>来建Slice，但是两者有区别。</p>
-
-<pre><code>// 代码片段
+</code></pre><p>也就是，string实际上就是<strong>只读</strong>的byte切片(Slice)，只是从Golang语言层面提供的语法支持而已。因为只能读，所以容量的存在与否都无济于事。</p><h4>4.2 关于Slice nil</h4><p>我们知道<code>make()</code>方法专门用来新建Slice、map、chan，但是我们也可以用<code>new()</code>来建Slice，但是两者有区别。</p><pre><code>// 代码片段
 nilSlice := new([]int)
-fmt.Printf("nilSlice is nil: %v \n", *nilSlice == nil)
+fmt.Printf(&quot;nilSlice is nil: %v \n&quot;, *nilSlice == nil)
 emptySlice := make([]int, 0)
-fmt.Printf("emptySlice is nil: %v \n", emptySlice == nil)
-</code></pre>
-
-<p>结果打印</p>
-
-<pre><code>nilSlice is nil: true 
+fmt.Printf(&quot;emptySlice is nil: %v \n&quot;, emptySlice == nil)
+</code></pre><p>结果打印</p><pre><code>
+nilSlice is nil: true 
 emptySlice is nil: false 
-</code></pre>
-
-<p>也就是用<code>new()</code>创建后的Slice变量是零值，而make()创建一个0长度的Slice并不是nil。</p>
-
-<p>为什么？因为<code>new()</code> 和 <code>make()</code>做的事情不一样。</p>
-
-<p><strong><code>new()</code>做了两件事</strong></p>
-
-<ul>
-<li>
-<ol>
-<li>为该类型分配内存</li>
-</ol></li>
-<li>
-<ol>
-<li>置零值（不同类型的零值不一样，比如: bool是false，整型是0...等）</li>
-</ol></li>
-</ul>
-
-<p><strong><code>make()</code>也做了两件事</strong></p>
-
-<ul>
-<li>
-<ol>
-<li>为该类型分配内存</li>
-</ol></li>
-<li>
-<ol>
-<li>初始化</li>
-</ol></li>
-</ul>
-
-<p>以Slice为例，<code>new([]int)</code>得到的SliceHeader是：</p>
-
-<pre><code>sliceHeader {
+</code></pre><p>也就是用<code>new()</code>创建后的Slice变量是零值，而make()创建一个0长度的Slice并不是nil。</p><p>为什么？因为<code>new()</code> 和 <code>make()</code>做的事情不一样。</p><p><strong><code>new()</code>做了两件事</strong></p><ul><li><ol><li><p>为该类型分配内存</p></li></ol></li><li><ol><li><p>置零值（不同类型的零值不一样，比如: bool是false，整型是0...等）</p></li></ol></li></ul><p><strong><code>make()</code>也做了两件事</strong></p><ul><li><ol><li><p>为该类型分配内存</p></li></ol></li><li><ol><li><p>初始化</p></li></ol></li></ul><p>以Slice为例，<code>new([]int)</code>得到的SliceHeader是：</p><pre><code>sliceHeader {
     array: nil,
     len: 0,
     cap: 0,
 }
-</code></pre>
-
-<p>而<code>make([]int, 0)</code>得到的SliceHeader应该是：</p>
-
-<pre><code>sliceHeader {
+</code></pre><p>而<code>make([]int, 0)</code>得到的SliceHeader应该是：</p><pre><code>sliceHeader {
     array: 0x8201d0140, // 指向0个元素的数组
     len: 0,
     cap: 0,
 }
-</code></pre>
-
-<hr />
-
-<h4>结语</h4>
-
-<p>从Slice的实现、使用场景进行更加全面的了解，会对在项目中的使用有更大的帮助以及尽量避免因为不知道细节而错用。</p>
-
-<p>参考：</p>
-
-<ul>
-<li>[1] <a href="https://blog.golang.org/slices">Golang/slices</a></li>
-</ul>
-</div>
+</code></pre><ul><li><ul><li><p>-</p></li></ul></li></ul><h4>结语</h4><p>从Slice的实现、使用场景进行更加全面的了解，会对在项目中的使用有更大的帮助以及尽量避免因为不知道细节而错用。</p><p>参考：</p><ul><li><p>[1] <a href="https://blog.golang.org/slices">Golang/slices</a></p></li></ul></div>
 
         <br/>
         <br/>

@@ -27,39 +27,18 @@
     </section>
 
     <section class="main-content">
-        <div><h5>触发<code>bus error</code>的代码片段</h5>
-
-<pre><code>char s1[10] = "string";
+        <div><h5>触发<code>bus error</code>的代码片段</h5><pre><code>char s1[10] = &quot;string&quot;;
 char s2[10];
-//  s2 = "string"; // cant't assign to char array  
+//    s2 = &quot;string&quot;; // cant't assign to char array  
 s2[0] = 'b';
 
-char *s3 = "string";
+char *s3 = &quot;string&quot;;
 char *s4;
-s4 = "string"; // s4 points to a string literal, It's read only.
+s4 = &quot;string&quot;; // s4 points to a string literal, It's read only.
 
 s3[0] = 'S'; // Occur: bus err
-printf("1: %s, 2: %s, 3: %s, 4: %s \n", s1, s2, s3, s4);
-</code></pre>
-
-<h4>原因</h4>
-
-<p>Quote from stackoverflow:</p>
-
-<p>Bus errors are rare nowadays on x86 and occur when your processor cannot even attempt the memory access requested, typically:</p>
-
-<ul>
-<li><p>using a processor instruction with an address that does not satisfy its alignment requirements.<br />
-Segmentation faults occur when accessing memory which does not belong to your process, they are very common and are typically the result of:</p></li>
-<li><p>using a pointer to something that was deallocated.</p></li>
-<li>using an uninitialized hence bogus pointer.</li>
-<li>using a null pointer.</li>
-<li>overflowing a buffer.
-PS: To be more precise this is not manipulating the pointer itself that will cause issues, it's accessing the memory it points to (dereferencing).</li>
-</ul>
-
-<p><a href="http://stackoverflow.com/a/212585/2398826">What is a bus error?</a></p>
-</div>
+printf(&quot;1: %s, 2: %s, 3: %s, 4: %s \n&quot;, s1, s2, s3, s4);
+</code></pre><h4>原因</h4><p>Quote from stackoverflow:</p><p>Bus errors are rare nowadays on x86 and occur when your processor cannot even attempt the memory access requested, typically:</p><ul><li><p>using a processor instruction with an address that does not satisfy its alignment requirements.  <br>Segmentation faults occur when accessing memory which does not belong to your process, they are very common and are typically the result of:</p></li><li><p>using a pointer to something that was deallocated.</p></li><li><p>using an uninitialized hence bogus pointer.</p></li><li><p>using a null pointer.</p></li><li><p>overflowing a buffer.<br>PS: To be more precise this is not manipulating the pointer itself that will cause issues, it's accessing the memory it points to (dereferencing).</p></li></ul><p><a href="http://stackoverflow.com/a/212585/2398826">What is a bus error?</a></p></div>
 
         <br/>
         <br/>
