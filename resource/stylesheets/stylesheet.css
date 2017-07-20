@@ -151,12 +151,10 @@ a {
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  /*padding: 2px 4px;*/
-  /*font-size: 1rem;*/
+  /*font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;*/
   padding: 3px 5px;
   margin: 0 1px;
-  line-height: 0em;
+  line-height: 0;
   font-size: 0.8em;
   background-color: #469edd;
   color: #fff;
