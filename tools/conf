@@ -3,12 +3,12 @@
 ## 博客配置
 BLOG_NAME="Hiko.im"
 BLOG_SLOGAN="LESS OR MORE"
-BLOG_NAME_ZH="异乡海子 | Hiko.im"
+BLOG_NAME_ZH="向南 | Hiko.im"
 BLOG_SLOGAN_ZH="I'M ALWAYS HERE"
-BLOG_NAME_EN="Hiko's Blog | Hiko.im"
+BLOG_NAME_EN="HQ's Blog | Hiko.im"
 BLOG_SLOGAN_EN="YEP, A QUIET PLACE"
 
-DEFAULT_AUTHOR=Hiko
+DEFAULT_AUTHOR=向南
 
 # 导航配置
 HEADER_NAV_ALL='全部/All:/,中文版:/index_zh.html,English:index_en.html'

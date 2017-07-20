@@ -27,10 +27,9 @@
     </section>
 
     <section class="main-content">
-        <div><h2>前言</h2><p>在缺省情况下，编译器为每一个变量或是数据单元按其自然对齐条件分配空间。</p><p>在结构中，编译器为结构的每个成员按其自然对界（alignment）条件分配空间。各个成员按照它们被声明的顺序在内存中顺序存储（成员之间可能有插入的空字节），第一个成员的地址和整个结构的地址相同。</p><h2>0x00 影响因素</h2><p>关系到内存对齐的两个重要因素：</p><ol><li><p>数据成员对齐和结构整体对齐</p></li><li><p>#pragma pack(n) 设置对齐条件 // n 表示整数，n = 1, 2, 4, 8, ...</p></li></ol><h2>0x01 因素解释</h2><h3>i. 数据成员对齐和结构整体对齐</h3><ul><li><p>编译器缺省的<code>结构成员</code>自然对齐条件为“N字节对齐”，N即该成员数据类型的长度。</p></li></ul><pre><code>    如：int型成员的自然对界条件为4字节对齐，而double类型的结构成员的自然对界条件为8字节对齐。
-    若该成员的起始偏移不位于该成员的“默认自然对界条件”上，则在前一个节面后面添加适当个数的空字节。</code></pre><ul><li><p>编译器缺省的<code>结构整体</code>的自然对齐条件为：该结构所有成员中要求的<strong>最大</strong>自然对齐条件。</p></li></ul><pre><code>    若结构体各成员长度之和不为“结构整体自然对齐条件的整数倍，则在最后一个成员后填充空字节。</code></pre><h3>ii. #pragma pack(n)</h3><p>改变默认的对齐条件。</p><pre><code>- 使用伪指令#pragma pack (n)，编译器将按照 n 个字节对齐。
+        <div><h2>0x00 前言</h2><p>在缺省情况下，编译器为每一个变量或是数据单元按其自然对齐条件分配空间。</p><p>在结构中，编译器为结构的每个成员按其自然对界（alignment）条件分配空间。各个成员按照它们被声明的顺序在内存中顺序存储（成员之间可能有插入的空字节），第一个成员的地址和整个结构的地址相同。</p><h2>0x01 影响因素</h2><p>关系到内存对齐的两个重要因素：</p><ol><li><p>数据成员对齐和结构整体对齐</p></li><li><p>#pragma pack(n) 设置对齐条件 // n 表示整数，n = 1, 2, 4, 8, ...</p></li></ol><h2>0x02 因素解释</h2><h3>i. 数据成员对齐和结构整体对齐</h3><ul><li><p>编译器缺省的<code>结构成员</code>自然对齐条件为“N字节对齐”，N即该成员数据类型的长度。</p></li></ul><blockquote><p>如：int型成员的自然对界条件为4字节对齐，而double类型的结构成员的自然对界条件为8字节对齐。<br>若该成员的起始偏移不位于该成员的“默认自然对界条件”上，则在前一个节面后面添加适当个数的空字节。</p></blockquote><ul><li><p>编译器缺省的<code>结构整体</code>的自然对齐条件为：该结构所有成员中要求的<strong>最大</strong>自然对齐条件。</p></li></ul><blockquote><p>若结构体各成员长度之和不为“结构整体自然对齐条件的整数倍，则在最后一个成员后填充空字节。</p></blockquote><h3>ii. #pragma pack(n)</h3><p>改变默认的对齐条件。</p><pre><code>- 使用伪指令#pragma pack (n)，编译器将按照 n 个字节对齐。
 - 使用伪指令#pragma pack ()，取消自定义字节对齐方式。
-</code></pre><p>备注：</p><ul><li><p>当 #pragma pack(n) 的 n 值等于或超过所有数据成员长度的时候，这个 n 值的大小将不产生任何效果。</p></li><li><p>对齐的原则是 min(sizeof(TYPE), n), TYPE 表示类型， 比如： int、long 等。</p></li></ul><h2>0x02 情况一： 默认的对齐条件（不设置 pack（n)）</h2><pre><code>    #include &lt;iostream&gt;
+</code></pre><p>备注：</p><blockquote><p>当 #pragma pack(n) 的 n 值等于或超过所有数据成员长度的时候，这个 n 值的大小将不产生任何效果。<br>对齐的原则是 min(sizeof(TYPE), n), TYPE 表示类型， 比如： int、long 等。</p></blockquote><h2>0x03 情况一： 默认的对齐条件（不设置 pack（n)）</h2><pre><code>    #include &lt;iostream&gt;
     
     // 不设置统一的对齐边界
     // #pragma pack(4)
@@ -85,7 +84,7 @@ size of S1: 24
 size of S2: 40
 sizeof S3: 12
 sizeof S4: 16
-</code></pre><h2>0x03 情况而： 设置对齐条件 pack（n)</h2><pre><code>    #include &lt;iostream&gt;
+</code></pre><h2>0x04 情况而： 设置对齐条件 pack（n)</h2><pre><code>    #include &lt;iostream&gt;
     
     // 设置统一的对齐条件为 4 
     #pragma pack(4)
