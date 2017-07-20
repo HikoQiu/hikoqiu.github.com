@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>内存对齐 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-内存对齐`Hiko`2017-07-20 11:09:01`内存对齐`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">内存对齐</h1>
+        <h2 class="project-tagline">by Hiko / 内存对齐</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h2>前言</h2>
+
+<p>在缺省情况下，编译器为每一个变量或是数据单元按其自然对齐条件分配空间。</p>
+
+<p>在结构中，编译器为结构的每个成员按其自然对界（alignment）条件分配空间。各个成员按照它们被声明的顺序在内存中顺序存储（成员之间可能有插入的空字节），第一个成员的地址和整个结构的地址相同。</p>
+
+<h2>0x00 影响因素</h2>
+
+<p>关系到内存对齐的两个重要因素：</p>
+
+<ol>
+<li>数据成员对齐和结构整体对齐</li>
+<li>&#35;pragma pack(n) 设置对齐条件 // n 表示整数，n = 1, 2, 4, 8, ...</li>
+</ol>
+
+<h2>0x01 因素解释</h2>
+
+<h3>i. 数据成员对齐和结构整体对齐</h3>
+
+<ul>
+<li>编译器缺省的<code>结构成员</code>自然对齐条件为“N字节对齐”，N即该成员数据类型的长度。</li>
+</ul>
+
+<p><code>如：int型成员的自然对界条件为4字节对齐，而double类型的结构成员的自然对界条件为8字节对齐。
+    若该成员的起始偏移不位于该成员的“默认自然对界条件”上，则在前一个节面后面添加适当个数的空字节。</code>
+- 编译器缺省的<code>结构整体</code>的自然对齐条件为：该结构所有成员中要求的<strong>最大</strong>自然对齐条件。
+<code>若结构体各成员长度之和不为“结构整体自然对齐条件的整数倍，则在最后一个成员后填充空字节。</code></p>
+
+<h3>ii. &#35;pragma pack(n)</h3>
+
+<p>改变默认的对齐条件。</p>
+
+<p>````
+- 使用伪指令#pragma pack (n)，编译器将按照 n 个字节对齐。
+- 使用伪指令#pragma pack ()，取消自定义字节对齐方式。</p>
+
+<p>````
+备注：</p>
+
+<ul>
+<li>当 #pragma pack(n) 的 n 值等于或超过所有数据成员长度的时候，这个 n 值的大小将不产生任何效果。</li>
+<li>对齐的原则是 min(sizeof(TYPE), n), TYPE 表示类型， 比如： int、long 等。</li>
+</ul>
+
+<h2>0x02 情况一： 默认的对齐条件（不设置 pack（n)）</h2>
+
+<p>````
+    #include <iostream></p>
+
+<pre><code>// 不设置统一的对齐边界
+// #pragma pack(4)
+
+using namespace std;
+
+typedef struct {
+    char a;
+    char a1;
+    long b;  // 8 bytes
+    char c;
+} S1; // 24 bytes = 1(a) + 1(a1) + [6个对齐字节] + 8(b) + 1(c) + [7个对齐字节]
+
+typedef struct {
+    char a;
+    S1 s1;
+    char b;
+    char c;
+} S2; // 40 bytes = 1(a) + [7个对齐字节] + 24(s1) + 1（b） + 1（c) + [6个对齐字节] 
+
+typedef struct {
+    int e;  // 4 bytes
+    char f;
+    short int a;  // 2 bytes
+    char b;
+} S3; // 12 bytes = 4(e) + 1(f) + [1个对齐字节] + 2(a) + 1(b) + [3个对齐字节]
+
+typedef struct {
+    int e;  // 4 bytes
+    char f;
+    int a;  // 4 bytes
+    char b;
+} S4; // 16 bytes = 4(e) + 1(f) + [3个对齐字节] + 4(a) + 1(b) + [3个对齐字节]
+
+int main(int argc, char* argv[]) {
+
+    cout &lt;&lt; "sizeof int: " &lt;&lt; sizeof(int) &lt;&lt; endl;
+
+    cout &lt;&lt; "size of S1: " &lt;&lt; sizeof(S1) &lt;&lt; endl;
+
+    cout &lt;&lt; "size of S2: " &lt;&lt; sizeof(S2) &lt;&lt; endl;
+
+    cout &lt;&lt; "sizeof S3: " &lt;&lt; sizeof(S3) &lt;&lt; endl;
+
+    cout &lt;&lt; "sizeof S4: " &lt;&lt; sizeof(S4) &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+
+<p>````</p>
+
+<p>````
+结果如下： 
+sizeof int: 4
+size of S1: 24
+size of S2: 40
+sizeof S3: 12
+sizeof S4: 16</p>
+
+<p>````</p>
+
+<h2>0x03 情况而： 设置对齐条件 pack（n)</h2>
+
+<p>````
+    #include <iostream></p>
+
+<pre><code>// 设置统一的对齐条件为 4 
+#pragma pack(4)
+
+using namespace std;
+
+typedef struct {
+    char a;
+    char a1;
+    long b;  // 8 bytes
+    char c;
+} S1; // 16 bytes = 1(a) + 1(a1) + [2个对齐字节] + 8(b) + 1(c) + [3个对齐字节]
+
+typedef struct {
+    char a;
+    S1 s1;
+    char b;
+    char c;
+} S2; // 24 bytes = 1(a) + [3个对齐字节] + 16(s1) + 1（b） + 1（c) + [2个对齐字节] 
+
+typedef struct {
+    int e;  // 4 bytes
+    char f;
+    short int a;  // 2 bytes
+    char b;
+} S3; // 12 bytes = 4(e) + 1(f) + [1个对齐字节] + 2(a) + 1(b) + [3个对齐字节]
+
+typedef struct {
+    int e;  // 4 bytes
+    char f;
+    int a;  // 4 bytes
+    char b;
+} S4; // 16 bytes = 4(e) + 1(f) + [3个对齐字节] + 4(a) + 1(b) + [3个对齐字节]
+
+int main(int argc, char* argv[]) {
+
+    cout &lt;&lt; "sizeof int: " &lt;&lt; sizeof(int) &lt;&lt; endl;
+
+    cout &lt;&lt; "size of S1: " &lt;&lt; sizeof(S1) &lt;&lt; endl;
+
+    cout &lt;&lt; "size of S2: " &lt;&lt; sizeof(S2) &lt;&lt; endl;
+
+    cout &lt;&lt; "sizeof S3: " &lt;&lt; sizeof(S3) &lt;&lt; endl;
+
+    cout &lt;&lt; "sizeof S4: " &lt;&lt; sizeof(S4) &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+
+<p>````</p>
+
+<p><code>结果如下： 
+sizeof int: 4
+size of S1: 16
+size of S2: 24
+sizeof S3: 12
+sizeof S4: 16</code></p>
+
+<p><strong>从 S3 的对齐结果大小看： 当 pack(n) 的 n 值大于类型的大小时， 对齐大小参考类型的大小，也就是： 对齐条件 = min(sizeof(TYPE), n).</strong></p>
+</div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>
