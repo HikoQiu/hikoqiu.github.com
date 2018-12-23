@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[Go细节] 浅析goroutine和线程、进程的区别 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[Go细节] 浅析goroutine和线程、进程的区别`Hiko`2016-03-13 13:09:58`go,goroutine,thread,process`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[Go细节] 浅析goroutine和线程、进程的区别</h1>
+        <h2 class="project-tagline">by Hiko / go,goroutine,thread,process</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h3>概览</h3><ul><li><p>1. 一个死循环的例子</p><ul><li><p>1.1 goroutine 死循环 (Go版本 &lt;= 1.5)</p></li><li><p>1.2 goroutine 死循环 (Go版本 &gt;= 1.6)</p></li><li><p>1.3 Java Thread 死循环</p></li><li><p>1.4 C fork子进程 死循环</p></li><li><p>1.5 小总结</p></li></ul></li><li><p>2. 调度方式</p><ul><li><p>2.1 抢占式( 进程/线程 )</p></li><li><p>2.2 协作式( goroutine )</p></li></ul></li><li><p>3. 相关开销</p><ul><li><p>3.1 内存(栈)</p></li><li><p>3.2 上下文切换</p></li></ul></li><li><p>4. 其他</p></li><li><ul><li><p>-</p></li></ul></li></ul><h3>1. 一个死循环的例子</h3><p>例子描述</p><ul><li><p>先起100个协程/线程/进程</p></li><li><p>接着 while(true) 在主线程中执行死循环</p></li></ul><p>观察 goroutine 、线程以及进程最终的执行结果。</p><h4>1.1 goroutine 死循环( Go 版本 &lt;= 1.5)</h4><ol><li><p>代码片段(1.1代码片段与1.2代码片段一样)</p><p>// runtime.GOMAXPROCS(runtime.NumCPU()) // 1.5之后无需指定利用处理器个数<br>for i:=0; i &lt; 100; i++ {</p><pre><code>go func() {
+    fmt.Println(&quot;当前 goroutine id : &quot;, GetGid())
+}()</code></pre><p>}</p><p>for {}</p></li></ol><blockquote><p>备注：关于如何获取goroutine的id，见另一篇文：<a href="/posts/zh/2016/04/huoqugoroutine_id_tech.html"><code>《获取 goroutine id》</code></a></p></blockquote><ol><li><p>编译运行结果<strong>卡在主协程的 for{} 死循环，其他子协程都无法被 Go runtime 调度器分配到处理器(P)去执行</strong>。</p><pre><code>结果：死循环中，无输出。    
+
+</code></pre></li></ol><h4>1.2 goroutine 死循环( Go 版本 &gt;= 1.6)</h4><ol><li><p>代码片段(1.1代码片段与1.2代码片段一样)</p><p>// runtime.GOMAXPROCS(runtime.NumCPU())<br>for i:=0; i &lt; 100; i++ {</p><pre><code>go func() {
+    fmt.Println(&quot;当前 goroutine id : &quot;, GetGid())
+}()</code></pre><p>}</p><p>for {}</p></li></ol><blockquote><p>备注：关于如何获取goroutine的id，见另一篇文：<a href="/posts/zh/2016/04/huoqugoroutine_id_tech.html"><code>获取 goroutine id</code></a></p></blockquote><ol><li><p>编译执行结果</p><pre><code>
+...
+
+当前 goroutine id :  22
+当前 goroutine id :  23
+当前 goroutine id :  24
+当前 goroutine id :  25
+当前 goroutine id :  26
+当前 goroutine id :  77
+当前 goroutine id :  51
+当前 goroutine id :  52
+
+...
+</code></pre></li></ol><h4>1.3 Java Thread 死循环</h4><ol><li><p>创建100个子线程</p><pre><code>for(int i = 0; i &lt; 100; i++) {   
+    // 起一个Java线程
+    PrintNumThread tr = new PrintNumThread();
+    tr.start();    
+}
+    
+while(true) {}
+
+
+</code></pre></li><li><p>子线程中打印线程id</p></li></ol><pre><code>public class PrintNumThread extends Thread {
+
+    @Override
+    public void run() {
+        super.run();
+    
+        try {
+            Thread.currentThread().sleep(5);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(&quot;current thread id : &quot;+ Thread.currentThread().getId());
+    }
+}
+</code></pre><ol><li><p>编译运行结果(截取其中的一小片段)</p><p>...</p><p>current thread id : 8<br>current thread id : 9<br>current thread id : 11<br>current thread id : 12<br>current thread id : 10<br>current thread id : 13<br>current thread id : 14<br>current thread id : 17<br>current thread id : 21<br>current thread id : 24</p><p>...</p></li></ol><h4>1.4 C fork子进程 死循环</h4><ol><li><p>父进程中，fork 100个子进程，并且在子进程中打印子进程的进程id</p><p>for(int i = 0; i &lt; 100; i++) {</p><pre><code>pid_t pid = fork();
+
+if(pid == 0) { // 子进程
+    printf(&quot;当前子进程ID: %d\n&quot;, getpid());
+    return 0;
+}else if(pid == -1) {
+    return -1;
+}</code></pre><p>}</p><p>while (1) {}</p></li><li><p>编译运行结果(截取其中的一小片段)</p><p>...</p><p>当前进程ID: 2354<br>当前进程ID: 2355<br>当前进程ID: 2356<br>当前进程ID: 2357<br>当前进程ID: 2358<br>当前进程ID: 2359<br>当前进程ID: 2360<br>当前进程ID: 2361</p><p>...</p></li></ol><h4>1.5 小总结</h4><p>从 1.1 ~ 1.4 的试验中，很明显能看出（或感受到） go 的 runtime 调度器对 goroutine 的调度与操作系统对进程和线程的调度方式是有区别的。</p><blockquote><p>在我写这篇文章之前的一段时间里，我的本地环境Go版本是1.5，当时试验1.1代码片段，观察到程序在 for{} 处死循环，并且 go 调度器没有调度其他 goroutine 进行执行。而最近1.6发布后，我升级了版本之后整理这篇文的时候，发现这个问题已经解决，所以有了1.2代码片段的试验(1.1代码片段一样)。  </p><p>而对于1.1代码片段(在1.5版本上编译执行)，要让其正常打印结果，可以在 for{} 中手动触发 Go 调度器进行调度：<code>runtime.GoSched()</code>。</p></blockquote><h3>2. 调度方式</h3><p>Processes are managed by kernel.<br>Goroutines and coroutines are managed by processes themself, and they are more lightweight than processes.</p><h4>2.1 抢占式( 进程/线程 )</h4><h4>2.2 协作式( goroutine )</h4><h3>3. 相关开销</h3><h4>3.1 内存(栈)</h4><h5>3.1.1 进程</h5><h5>3.1.2 线程</h5><h5>3.1.3 goroutine</h5><p>At least with the gc toolchain, a goroutine really just <br>has two values: a stack pointer and a pointer to the g structure. <br>Switching to a new goroutine is just a matter of a few instructions.</p><blockquote><p>How is it possible Go supports 100k+ concurrent goroutines on a single CPU, <br>doing context switching between all of them without large overhead?</p></blockquote><p>If all 100k goroutines are actively doing things in parallel, the Go <br>code will tend to have significant overhead.  In a normal Go program, <br>though, each goroutine will be waiting for network input.</p><blockquote><p>We all know it is a bad idea for a (C, Java) program to create thousands of <br>OS threads (e.g. one thread per request). This is mainly because:</p><ol><li><p>Each thread uses fixed amount of memory for its stack</p><pre><code>(while in Go, the stack grows and shrinks as needed) 
+</code></pre></li><li><p>With many threads, the overhead of context switching becomes significant</p><pre><code>(isn't this true in Go as well?) </code></pre></li></ol></blockquote><p>The context of a goroutine is much smaller and easier to change than <br>the context of an OS thread.  If nothing else an OS thread has a <br>signal mask.  At least with the gc toolchain, a goroutine really just <br>has two values: a stack pointer and a pointer to the g structure. <br>Switching to a new goroutine is just a matter of a few instructions. </p><p>Also goroutines do cooperative scheduling and threads do not.</p><blockquote><p>Even if Go context-switched only on IO and channel access, doesn't it still <br>have to save and restore the state of variables for each goroutine? How is <br>it possible it is so efficient compared to an OS scheduler?</p></blockquote><p>It does not have to save and restore each variable.  All goroutines <br>see the same global variables, and local variables are always accessed <br>via the stack pointer. </p><p><a href="https://groups.google.com/forum/#!msg/golang-nuts/j51G7ieoKh4/wxNaKkFEfvcJ">Context switch</a></p><h4>3.2 上下文切换</h4><p><a href="https://groups.google.com/forum/#!topic/golang-nuts/0Szdmmy22pk">https://groups.google.com/forum/#!topic/golang-nuts/0Szdmmy22pk</a></p><p><a href="http://dave.cheney.net/2015/08/08/performance-without-the-event-loop">Performance without the event loop</a></p><h5>3.2.1 进程</h5><h5>3.2.2 线程</h5><h5>3.2.3 goroutine</h5><p>Goroutines</p><p>They're called goroutines because the existing terms—threads, coroutines, processes, and so on—convey inaccurate connotations. A goroutine has a simple model: it is a function executing concurrently with other goroutines in the same address space. It is lightweight, costing little more than the allocation of stack space. And the stacks start small, so they are cheap, and grow by allocating (and freeing) heap storage as required.</p><p>Goroutines are multiplexed onto multiple OS threads so if one should block, such as while waiting for I/O, others continue to run. Their design hides many of the complexities of thread creation and management.</p><h3>4. 其他</h3><h3>参考</h3><ul><li><p><a href="https://www.goinggo.net/2014/01/concurrency-goroutines-and-gomaxprocs.html">Concurrency, Goroutines and GOMAXPROCS</a></p></li><li><p><a href="http://stackoverflow.com/questions/24599645/how-do-goroutines-work-or-goroutines-and-os-threads-relation">How do goroutine work or goroutines and os threads relation</a></p></li><li><p><a href="https://groups.google.com/forum/#!topic/golang-nuts/2IdA34yR8gQ">Why 1000 goroutine generate 1000 os threads?</a></p></li><li><p><a href="https://groups.google.com/forum/#!msg/golang-nuts/j51G7ieoKh4/wxNaKkFEfvcJ">Goroutine vs OS threads</a></p></li><li><p><a href="https://golang.org/doc/effective_go.html#goroutines">goroutines</a></p></li><li><p><a href="http://dave.cheney.net/2013/06/02/why-is-a-goroutines-stack-infinite">Why is a goroutines stack infinite ?</a></p></li><li><p><a href="https://blog.cloudflare.com/how-stacks-are-handled-in-go/">How stacks are handled in go ?</a></p></li></ul></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

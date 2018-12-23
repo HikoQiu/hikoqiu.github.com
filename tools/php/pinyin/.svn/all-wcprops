@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/hulk_falcon/!svn/ver/8/trunk/src/app/common/libs/pinyin
+END
+pinyin_multi.dat
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/hulk_falcon/!svn/ver/8/trunk/src/app/common/libs/pinyin/pinyin_multi.dat
+END
+Pinyin.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/hulk_falcon/!svn/ver/8/trunk/src/app/common/libs/pinyin/Pinyin.php
+END
+pinyin.dat
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/hulk_falcon/!svn/ver/8/trunk/src/app/common/libs/pinyin/pinyin.dat
+END

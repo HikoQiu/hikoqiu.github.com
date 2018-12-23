@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[Golang] Golang pb (Protobuf) 使用实例 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[Golang] Golang pb (Protobuf) 使用实例`Hiko`2016-09-06 14:19:26`Golang, pb, Protobuf, 例子`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[Golang] Golang pb (Protobuf) 使用实例</h1>
+        <h2 class="project-tagline">by Hiko / Golang, pb, Protobuf, 例子</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h4>0.0 背景</h4><blockquote><p>把 HiMagpie 推送服务的各模块数据交互从 json 替换成 pb.</p></blockquote><h4>1.0 安装 Protobuf 编译器 protoc</h4><ul><li><p>到 <a href="https://github.com/google/protobuf/releases">https://github.com/google/protobuf/releases</a> 下载 protoc 源码</p></li><li><p>解压并进入源码目录</p></li><li><p>./configure --prefix=/usr/local/pb</p></li><li><p>make</p></li><li><p>sudo make install</p></li></ul><blockquote><p>把 /usr/local/pb/bin 加到 $PATH 环境变量</p><ul><li><p>sudo vi /etc/profile</p></li><li><p>添加 <code>export PATH=$PATH:/usr/local/pb/bin</code></p></li><li><p>保存，并执行: source /etc/profile</p></li></ul></blockquote><h4>2.0 获取 Protobuf 编译器插件 protoc-gen-go，以支持生成 Golang 的 pb 源文件</h4><ul><li><p>新建一个 pb 的 Golang 项目</p></li><li><p>进入 pb 项目， export GOPATH=<code>pwd</code></p></li><li><p>获取 <code>protoc-gen-go</code>: go get -u github.com/golang/protobuf/protoc-gen-go</p></li></ul><blockquote><p>在 pb 的 <code>bin</code> 目录中会生成 <code>protoc-gen-go</code> 二进制文件</p></blockquote><ul><li><p>把 <code>pb/src/bin</code> 的绝对路径添加到环境变量 <code>PATH</code>, 比如: 修改 <code>/etc/profile</code> 文件，添加 <code>export PATH=$PATH:/.../pb/src/bin</code>, 然后 source /etc/profile 使变量生效</p></li><li><p>获取 Golang 的 goprotobuf 提供的库，用于 Golang 项目实际开发中的编码 (marshal) 和 解码 (unmarshal) 等</p></li><li><p>go get -u github.com/golang/protobuf</p></li></ul><h4>3.0 测试</h4><h5>3.1 新建 *.proto 文件</h5><p>在刚刚新建的 pb 项目下，新建目录: src/app/protos, 然后在 <code>protos</code> 包目录下新建 <code>example.proto</code> 文件。</p><p><code>example.proto</code> 内容:</p><pre><code>package protos;
+
+enum FOO {
+    X = 17;
+};
+
+message Example {
+    required string label = 1;
+    optional int32 type = 2 [default=77];
+    repeated int64 reps = 3;
+    optional group OptionalGroup = 4 {
+        required string RequiredField = 5;
+    }
+}
+</code></pre><h5>3.2 使用 protoc 解析 <em>.proto 文件，生成对应的 </em>.go 文件</h5><p>进入 <code>src/app/protos</code> 目录, 编译 *.proto</p><blockquote><p>protoc --go_out=. example.proto  <br>备注：也可以使用 <code>protoc --go_out=. *.proto</code> 编译所有 *.proto 文件</p></blockquote><p>编译成功，会在当前目录看到 example.pb.go 的 Golang 文件，可用于开发使用。</p><h4>4.1 测试实例</h4><p>在 <code>src/app</code> 目录下新建 <code>main.go</code> 文件， 内容:</p><pre><code>package main
+
+import (
+    &quot;app/protos&quot;
+    &quot;github.com/golang/protobuf/proto&quot;
+    &quot;log&quot;
+    &quot;os&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    exam := &amp;protos.Example{
+        Label: proto.String(&quot;Hello, ProtoBuffer.&quot;),
+        Type: proto.Int32(17),
+        Optionalgroup:&amp;protos.Example_OptionalGroup{
+            RequiredField:proto.String(&quot;Opitonalgroup&quot;),
+        },
+    }
+
+    data, err := proto.Marshal(exam)
+    if err != nil {
+        log.Fatal(&quot;Marshaling pb err: &quot;, err)
+        os.Exit(-1)
+    }
+
+    newExam := &amp;protos.Example{}
+    err = proto.Unmarshal(data, newExam)
+    if err != nil {
+        log.Fatal(&quot;Unmarshling err: &quot;, err)
+        os.Exit(-1)
+    }
+
+    if exam.GetLabel() != newExam.GetLabel() {
+        log.Fatalf(&quot;data mismatch %q != %q&quot;, exam.GetLabel(), newExam.GetLabel())
+        os.Exit(-1)
+    }
+
+    fmt.Println(&quot;OK! &quot;, newExam.GetLabel())
+}
+</code></pre><ul><li><p>编译: go install app</p></li><li><p>执行生成的 app 二进制文件，如: ./bin/app</p></li></ul><p>输出结果:</p><blockquote><p>OK!  Hello, ProtoBuffer.</p></blockquote></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

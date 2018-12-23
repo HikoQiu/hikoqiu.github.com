@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[Go细节] 获取goroutine id - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[Go细节] 获取goroutine id`Hiko`2016-04-13 21:37:06`Golang, goroutine, id`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[Go细节] 获取goroutine id</h1>
+        <h2 class="project-tagline">by Hiko / Golang, goroutine, id</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h3>概览</h3><ol><li><p>Why goroutine id?</p></li><li><p>方式一: 修改源码 (Go1.4 / Go1.6)</p></li><li><p>方式二: 通过Stack解析</p></li><li><p>方式三: 生成唯一id</p></li></ol><ul><li><ul><li><p>-</p></li></ul></li></ul><h3>1. Why goroutine id?</h3><p>在准备<a href="/posts/zh/2016/03/lets_go_qianxigoroutinehexiancheng_jinchengdequbie_tech.html"><code>《浅析goroutine和线程、进程的区别》</code></a>这篇文的过程中，想用 goroutine 跟 Java 的 Thread 进行简单对比——打印goroutine id / 线程id。</p><p>潜意识认为，goroutine 是被 runtime 管理的，所以使用 runtime 包应该是能获取到 goroutine 的 id。试了几个潜意识中的 runtime.Get*Id() 的函数都未果，转为查找资料。</p><p><strong>为什么获取 goroutine id 还那么麻烦？</strong></p><p>在 google 的讨论组 <a href="https://groups.google.com/forum/#!forum/golang-nuts"><code>golang-nuts</code></a> 中， <em>minux</em> 给出的解释，如下：</p><blockquote><p>Please don't use goroutine local storage. It's highly discouraged. In fact, IIRC, we used to expose Goid, but it is hidden since we don't want people to do this.</p><p>Potential problems include:</p><ol><li><p>when goroutine goes away, its goroutine local storage won't be GCed. (you can get goid for the current goroutine, but you can't get a list of all running goroutines)</p></li></ol><p>2. what if handler spawns goroutine itself?   <br>the new goroutine suddenly loses access to your goroutine local storage. You can guarantee that your own code won't spawn other goroutines, but in general you can't make sure the standard library or any 3rd party code won't do that.</p><p>thread local storage is invented to help reuse bad/legacy code that assumes global state, Go doesn't have legacy code like that, and you really should design your code so that state is passed explicitly and not as global (e.g. resort to goroutine local storage)</p><p>Tip: <a href="https://groups.google.com/forum/#!msg/golang-nuts/Nt0hVV_nqHE/GABH0-ctYqAJ">Ref from minux's reply.</a></p></blockquote><h3>2. 方式一: 修改源码</h3><h4>2.1 为什么 Go1.4 和 1.5以上版本 的获取方式不一样？</h4><p>Golang在版本1.4之前还是使用 C 来实现，到Go1.5才实现自举（Go 编译自己）。</p><h4>2.2 Go1.4 实现方式</h4><p>在Go1.4的 <a href="https://github.com/golang/go/blob/release-branch.go1.4/src/runtime/runtime.h#L298"><code>runtime.h</code></a> 中定义 <code>G</code> (goroutine的描述) 如下：</p><pre><code>struct    G
+{
+    ...
+    
+    void*    param;        // passed parameter on wakeup
+    uint32    atomicstatus;
+    int64    goid;
+    int64    waitsince;    // approx time when the G become blocked
+    String    waitreason;    // if status==Gwaiting
+    
+    ...
+};
+</code></pre><p>为了方便看到重点，上面的结构体省略去其他大部分字段。从 <code>G</code> 中看到 Go 为每个 goroutine 分配一个唯一 id ( goid ) 。只是没有暴露接口而已。</p><p>这样一来，可以直接修改源码，把 <code>goid</code> 暴露出来，比如在 <code>runtime.c</code> 文件中添加一个获取 goid 的函数： <code>GetGoId()</code>。</p><h4>2.2.1 Go1.4 修改方式</h4><ol><li><p>$GOPATH/src/pkg/runtime/runtime.c，在底部添加一个方法。</p><p>void<br>runtime·GetGoId(int32 ret)<br>{</p><pre><code>ret = g-&gt;goid;
+USED(&amp;ret);</code></pre><p>}</p></li><li><p>$GOPATH/src/pkg/runtime/extern.go 导出函数。</p><p>func GetGoId() int</p></li><li><p>重新编译源代码，可参考：<a href="/posts/zh/2016/04/yuanmaanzhuangGo1_6_tech.html"><code>《源码安装Go1.6》</code></a>。</p></li></ol><h4>2.2.2 Go1.6 修改方式</h4><p>在 Go1.6 源码 <a href="https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L331"><code>runtime2.go</code></a> 中仍然有 goid，只是没有暴露出来。</p><p>现在给源码添加一个 <code>GetGoid()</code> 的函数。</p><ol><li><p>在 <a href="https://github.com/golang/go/blob/master/src/runtime/extern.go"><code>extern.go</code></a> 中给 <code>runtime</code>包添加一个新的函数。</p><p>// 手工添加<br>func GetGoid() int64 {</p><pre><code>return getg().goid</code></pre><p>}</p></li><li><p>在 <a href="https://github.com/golang/go/blob/master/api/go1.txt"><code>api/go1.txt</code></a> （ api 是跟源码目录 src 同级）中添加 <code>GetGoid()</code> 函数的<em>声明</em>。</p><p>pkg runtime, func GetGoid() int64</p></li></ol><p>如果不加，在编译源码过程中最后执行测试的时候会报错。</p><ol><li><p>使用方式</p></li></ol><p>因为直接给源码加了一个函数，所以用起来会很简单，直接在需要用到的地方调用：</p><pre><code> runtime.GetGoid()
+</code></pre><blockquote><p>备注：不推荐以修改源码的方式去获取 goroutine 的id，这不利于后期维护。</p></blockquote><h3>3. 方式二: 通过Stack解析</h3><p>直接将获取 goroutine id 的代码封装成一个函数，方便使用，代码如下：</p><pre><code>func GoID() int {
+    var buf [64]byte
+    n := runtime.Stack(buf[:], false)
+    idField := strings.Fields(strings.TrimPrefix(string(buf[:n]), &quot;goroutine &quot;))[0]
+    id, err := strconv.Atoi(idField)
+    if err != nil {
+        panic(fmt.Sprintf(&quot;cannot get goroutine id: %v&quot;, err))
+    }
+    return id
+}
+</code></pre><p><code>runtime.Stack()</code> 会把当前调用的 goroutine 的栈追踪信息(Stack trace)保存写到所传的参数 <code>buf</code> 中。上面的方式是直接处理字符解析，获取到 goroutine 的id。</p><blockquote><p>备注：上面代码在Go1.5 和 Go1.6 测试。</p></blockquote><h3>4. 方式三: 生成唯一id</h3><p>上面提到的几种方式，总得来说能解决问题，但是不够优雅，用了一些 hack 的手段。如果只是想唯一标记一个 goroutine，其实也可以自己给 goroutine 生成唯一id。</p><p>Go 提供了并发安全的 <code>sync</code> 库 (了解更多可以查看<a href="/posts/zh/2016/04/Gobingfaanquanzhisyncku_tech.html"><code>《Go并发安全之sync库》</code></a>)，其中有提供原子操作 <code>atomic</code>。</p><p><strong>解决方式：</strong></p><ol><li><p>定义<em>全局</em>变量 GoroutineId。</p><p>var GoroutineId int64</p></li><li><p>在每个需要需要唯一标记的 goroutine 中使用原子操作进行加1，分配唯一的id。</p><p>atomic.AddInt64(&GoroutineId, 1)</p><p>以此方式来标记唯一的 goroutine 也能达到效果。</p></li></ol><h3>参考</h3><ul><li><p><a href="http://wendal.net/2013/0205.html">获取 goroutine 的 id</a></p></li><li><p><a href="http://colobu.com/2016/04/01/how-to-get-goroutine-id/">如何得到 goroutine 的 id?</a></p></li></ul></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

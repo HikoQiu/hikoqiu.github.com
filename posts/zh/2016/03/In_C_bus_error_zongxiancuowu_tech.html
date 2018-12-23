@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[In C] bus error/总线错误 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[In C] bus error/总线错误`Hiko`2016-03-18 13:27:30`c,bus err,总线错误`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[In C] bus error/总线错误</h1>
+        <h2 class="project-tagline">by Hiko / c,bus err,总线错误</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h5>触发<code>bus error</code>的代码片段</h5><pre><code>char s1[10] = &quot;string&quot;;
+char s2[10];
+//    s2 = &quot;string&quot;; // cant't assign to char array  
+s2[0] = 'b';
+
+char *s3 = &quot;string&quot;;
+char *s4;
+s4 = &quot;string&quot;; // s4 points to a string literal, It's read only.
+
+s3[0] = 'S'; // Occur: bus err
+printf(&quot;1: %s, 2: %s, 3: %s, 4: %s \n&quot;, s1, s2, s3, s4);
+</code></pre><h4>原因</h4><p>Quote from stackoverflow:</p><p>Bus errors are rare nowadays on x86 and occur when your processor cannot even attempt the memory access requested, typically:</p><ul><li><p>using a processor instruction with an address that does not satisfy its alignment requirements.  <br>Segmentation faults occur when accessing memory which does not belong to your process, they are very common and are typically the result of:</p></li><li><p>using a pointer to something that was deallocated.</p></li><li><p>using an uninitialized hence bogus pointer.</p></li><li><p>using a null pointer.</p></li><li><p>overflowing a buffer.<br>PS: To be more precise this is not manipulating the pointer itself that will cause issues, it's accessing the memory it points to (dereferencing).</p></li></ul><p><a href="http://stackoverflow.com/a/212585/2398826">What is a bus error?</a></p></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

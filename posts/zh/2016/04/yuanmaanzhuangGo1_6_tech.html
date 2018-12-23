@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[Go细节] 源码安装Go1.6 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[Go细节] 源码安装Go1.6`Hiko`2016-04-11 13:02:55`Golang源码安装, Go1.6, Go1.4`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[Go细节] 源码安装Go1.6</h1>
+        <h2 class="project-tagline">by Hiko / Golang源码安装, Go1.6, Go1.4</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h3>步骤概览</h3><ol><li><p>下载Go1.4源码并编译</p></li><li><p>下载Go1.6源码并通过Go1.4编译安装Go1.6</p></li><li><p>IntelliJ IDEA编辑器配置（可选）</p></li></ol><ul><li><ul><li><p>-</p></li></ul></li></ul><h3>1 下载并编译Go1.4.*源码</h3><ul><li><p>为什么需要安装Go1.4？</p></li></ul><blockquote><p>Golang在版本1.5之后(包括1.5)实现了自举(bootstrapping)，指的是：用要编译的目标编程语言编写其编译器（或汇编器）。</p></blockquote><p>参考：<a href="https://docs.google.com/document/d/1OaatvGhEAq7VseQ9kkavxKNAfepWy2yhPUBs96FGV28/edit">Go 1.5 Bootstrap Plan</a></p><h4>1.1 下载</h4><p>先从Go的官网下载1.4版本的源代码，地址见: <a href="https://golang.org/dl/">源码列表</a>。  </p><p>Go官网需要需要梯子才能访问，如果你没有梯子，那么也可以直接从<a href="https://github.com/golang/go">Github/Golang</a>仓库下载对应版本的Go源码（只需选择对应的分支进行下载就行，比如：<code>release-brach.go.1.4</code>分支）。</p><p>为了日后更方便管理源码和已经安装的软件，建议在/usr/local下见建一个go目录（路径: <code>/usr/local/go</code>），然后把刚下载的Go1.4源码解压到<code>/usr/local/go/go1.4</code>目录。</p><h3>1.2 编译</h3><p>进入<code>/usr/local/go/go1.4/src</code>执行<code>./all.bash</code>。<br>一切顺利的话，将会在<code>/usr/local/go/go1.4/bin</code>看到两个二进制文件 <code>go</code> 和 <code>gofmt</code>。</p><h4>2 下载Go1.6源码并通过Go1.4编译安装Go1.6</h4><h4>2.1 下载</h4><p>同样从<a href="https://golang.org/dl/">源码列表</a>或者<a href="https://github.com/golang/go">Github/Golang</a>仓库下载下载1.6版本的源代码。</p><p>接着，解压到<code>/usr/local/go</code>目录（刚刚Go1.4是解压到/usr/local/go/1.4，其实这也不是强求的，只是个人的文件管理习惯而已）。</p><p>进入<code>/usr/local/go/src/</code>目录，修改<code>all.bash</code>文件，在顶部修改<code>GOROOT_BOOTSTRAP</code>环境变量，应该默认该变量的的值是: ~/go1.4，但是这里我是把Go1.4放到/usr/local/go/go1.4。</p><blockquote><p>export GOROOT_BOOTSTRAP=/usr/local/go/go1.4</p></blockquote><h4>2.2 安装</h4><p>进入<code>/usr/local/go/src</code>执行<code>./all.bash</code>。<br>一切顺利的话，将会在<code>/usr/local/go/bin</code>看到两个二进制文件 <code>go</code> 和 <code>gofmt</code>。</p><p>最后，在自己的~/.profile加上，方便使用go命令:</p><blockquote><p>export PATH=$PATH:/usr/local/go/bin</p></blockquote><p>执行以下<code>. ~/.profile</code>, 然后运行<code>go version</code>将会看到：</p><blockquote><p>go version go1.6 darwin/amd64</p></blockquote><h3>3 配置IntelliJ IDEA编辑器（可选）</h3><p>个人使用Intellij IDEA进行Go开发，下载一个Go插件，接着配置Go的SDK，代码提示、包的自动导入都很方便。</p><h4>3.1 下载IntelliJ IDEA</h4><p>从编辑器的官网下载：<a href="https://www.jetbrains.com/idea/#chooseYourEdition">IntelliJ IDEA</a>，它有提供社区版，也够用了。</p><p>安装完编辑器后装上<a href="https://github.com/go-lang-plugin-org">Go插件</a>，可以直接从编辑器中查找并安装，装完插件后重启编辑器。</p><h4>3.2 配置Go SDK</h4><p>新建Go项目，配置SDK路径，SDK路径：<code>/usr/local/go</code>。<br>如果新建Go项目时没配SDK，也可以在打开项目之后，在<code>File -&gt; Project Structure...</code>中配置。</p><p>至此，就可以开始开发Go项目。</p><h3>参考</h3><ul><li><p>[1] <a href="https://golang.org/doc/install/source">Installing Go from source</a></p></li><li><p>[2] <a href="https://github.com/northbright/Notes/blob/master/Golang/china/install-go1.6-from-source-on-centos7-in-china.md">Install Go1.6 from Source on CentOS 7 in China</a></p></li></ul></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

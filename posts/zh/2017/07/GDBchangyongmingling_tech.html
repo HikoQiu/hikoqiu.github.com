@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>GDB常用命令 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-GDB常用命令`向南`2017-07-21 02:01:12`GDB, 调试`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">GDB常用命令</h1>
+        <h2 class="project-tagline">by 向南 / GDB, 调试</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h2>0x00 简介</h2><p>GDB是GNU开源组织发布的一个强大的UNIX下的程序调试工具。</p><p>一般来说，GDB 主要有一下功能：</p><ol><li><p>启动程序，按照期望运行程序</p></li><li><p>程序断点调试</p></li><li><p>查看程序运行时信息</p></li><li><p>动态的改变程序的执行环境</p></li></ol><h2>0x01 启动程序</h2><p><strong>1. 启动方式一</strong></p><pre><code>$ gdb {BIN_NAME}</code></pre><p><strong>2. 启动方式二</strong></p><pre><code>$ gdb
+(gdb) file {BIN_NAME}
+(gdb) start/run</code></pre><blockquote><p><strong>编译程序的时候要加入 <code>-g</code> 调试选项。</strong></p><ol><li><p>关于 <code>run</code><br>用 <code>run</code> 命令开始运行，程序会运行到设置了断点的位置后暂停运行。&gt;</p></li></ol><p>可使用 <code>run</code> 命令，在它后面可以跟随发给该程序的任何参数，包括标准输入和标准输出说明符(&lt;和&gt; )和 shell 通配符（*、？、[、]）在内。</p><p><code>run</code> 可简写为 <code>r</code>。</p><ol><li><p>关于 start</p></li></ol><p>运行至main()函数，停下来。</p></blockquote><p><strong>3. 启动方式三： 调试正在运行的程序</strong></p><pre><code>$ gdb {PID} // {PID} 为进程 ID</code></pre><h2>0x02 查看代码相关</h2><h3>i. 列出指定区域代码</h3><pre><code>(gdb) list n1 n2</code></pre><blockquote><p><code>list</code> 可以简写为l，将会显示 n1 行和 n2 行之间的代码。</p><p>如果没有 n1 和 n2 参数，那么就会默认显示当前行和之后的10行，再执行又下滚 10 行。</p><p><code>list</code> 可以接函数名。</p><p>一般来说在 <code>list</code> 后面可以跟以下这们的参数：  </p><p>&lt; linenum &gt;   行号， 如： l 100  <br>&lt;+offset&gt;   当前行号的正偏移量， 如：l +90  <br>&lt;-offset&gt;   当前行号的负偏移量。  <br>&lt; filename:linenum &gt;  指定文件文件的某一行， 如：l nginx.c:100  <br>&lt;function&gt;  函数名，如： l main  <br>&lt; filename:function &gt; 指定文件某函数， 如： l nginx.c:main  <br>&lt; *address &gt;  程序运行时的语句在内存中的地址。</p></blockquote><h2>0x03 执行代码相关</h2><p><strong>1. 执行一行代码。</strong></p><pre><code>(gdb) next</code></pre><p>如果是函数也会跳过函数，可以简写为 n。</p><p><strong>2. 执行 N 次下一步</strong></p><pre><code>(gdb) n N</code></pre><p><strong>3. 执行上次执行的命令</strong></p><pre><code>(gdb) [Enter]</code></pre><p>输入回车就会执行<code>上一次</code>的命令。</p><p><strong>4. 单步进入</strong></p><pre><code>(gdb) step</code></pre><p><code>step</code> 也会执行一行代码，不过如果遇到函数的话就会进入函数的内部，再一行一行的执行。</p><blockquote><p>备注：注意与 <code>next</code> 的区别。</p></blockquote><p><strong>5. 执行完当前函数返回到调用它的函数</strong></p><pre><code>(gdb) finish</code></pre><p>运行程序直到当前函数运行完毕返回再停止。</p><p>例如进入的单步执行如果已经进入了某函数，而想退出该函数返回到调用该函数的代码位置。</p><p><strong>6. 指定程序直到退出当前循环体</strong></p><pre><code>(gdb) until</code></pre><p>把光标停止在循环的头部，输入 <code>until</code> 将自动执行完循环。</p><p>可简写为：u。</p><p><strong> 7. 跳转执行程序到第 N 行</strong></p><pre><code>(gdb) jump N</code></pre><p>跳转到第 N 行执行完毕之后，如果后面没有断点则继续执行。   <br>可以简写为 <code>j N</code>。</p><blockquote><p>备注：跳转不会改变当前的堆栈内容，所以跳到别的函数中就会有奇怪的现象，因此最好跳转在一个函数内部进行，跳转的参数也可以是程序代码行的地址，函数名等等类似 <code>list</code>。</p></blockquote><p><strong>8. 强制返回当前函数</strong></p><pre><code>(gdb) return
+</code></pre><p>将会忽略当前函数还没有执行完毕的语句，强制返回。</p><blockquote><p>备注：<code>return</code> 后面可以接一个表达式，表达式的返回值就是函数的返回值。</p></blockquote><p><strong>9. 强制调用函数 1</strong></p><pre><code>(gdb) call &lt;expr&gt;
+// 如： call main , main 是函数名</code></pre><p>&lt;expr&gt; 可以是一个函数，返回函数的返回值，如果函数的返回类型是void 那么就不会打印函数的返回值。</p><p><strong>10. 强制调用函数 2</strong></p><pre><code>(gdb) print &lt;expr&gt;</code></pre><p><code>print</code> 和 <code>call</code> 的功能类似。</p><p>不同的是：如果函数的返回值是 void, 那么 <code>call</code> 不会打印返回值，但是 <code>print</code> 还是会打印出函数的返回值并且存放到历史记录。</p><p><strong>11. 在当前的文件中某一行（假设为 6）设定断点</strong></p><pre><code>(gdb) break 6</code></pre><p>可简写： <code>b 6</code>。</p><blockquote><p>备注，<code>break</code> 也支持以下方式设置断点。</p><p>b 函数名，如：<code>b main</code>  &gt; b 行号，如：<code>b 100</code>  &gt; b 文件名:行号，如：<code>b nigix.c:100</code>  &gt; b 文件名:函数名，如：<code>b nginx.c:main</code>  &gt; b +偏移量  &gt; b -偏移量  &gt; b *地址</p></blockquote><p><strong>12. 设置条件断点</strong></p><pre><code>(gdb) break 46 if test_size==100</code></pre><p>如果 test_size==100 就在 46 行处断点。</p><p><strong>13. 检测表达式变化则停住</strong></p><pre><code>(gdb) watch i != 10</code></pre><p><code>i != 10</code> 这个表达式一旦变化，则停住。</p><blockquote><p>watch &lt;expr&gt; 为<code>表达式</code>或<code>变量</code> (expr) 设置一个观察点。一旦表达式值有变化时，马上停住程序 (也是一种断点)。</p><p>备注： 除了 <code>watch</code> 还有 <code>awatch</code> （被访问和修改时）和 <code>rwatch</code> （被访问时）。</p></blockquote><p><strong>14.删除断点</strong></p><pre><code>(gdb) delete N</code></pre><p>可简写为 <code>d N</code> 。</p><pre><code>// 删除所有断点有两种方式
+
+(gdb) delete
+
+或
+
+(gdb) d breakpoints
+
+// 清除行N上面的所有断点：
+
+(gdb) clear N</code></pre><p><strong>15. 查看断点</strong></p><pre><code>(gdb) info b</code></pre><p><strong>16. 继续运行程序</strong></p><pre><code>(gdb) continue</code></pre><p>可简写： <code>c</code> 。</p><p>调试时，可以使用 c 命令继续运行程序。 程序会在遇到断点后再次暂停运行，如果没有遇到断点，就会一直运行到结束。</p><h2>0x04 查看/设置运行时信息</h2><p><strong>1. 显示当前调用函数栈中的函数</strong></p><pre><code>(gdb) backtrace</code></pre><p>命令产生一张列表，包含着从最近的过程开始的所有有效过程和调用这些过程的参数。同时，也显示出当前运行到的文件和行。</p><blockquote><p>bt 显示所有函数  &gt; bt N 显示开头 N 个函数  &gt; bt -N 显示最后 N 个函数    &gt; bt full 显示调用函数和函数中局部变量</p></blockquote><p><strong>2. 查看当前调试程序的语言环境</strong></p><pre><code>(gdb) show language</code></pre><p>如果 gdb 不能识别你所调试的程序，那么默认是c语言。</p><p><strong>3. 查看当前函数的程序语言</strong></p><pre><code>(gdb) info frame</code></pre><p><strong>4. 显示当前的调试源文件</strong></p><pre><code>(gdb) info source</code></pre><p>显示当前所在的源代码文件信息，例如：文件名称，程序语言等。</p><p><strong>5. print 显示变量值</strong></p><pre><code>(gdb) print var</code></pre><p>可简写为 <code>p</code>。</p><blockquote><p>备注： <code>print</code> 是 GDB 的一个功能很强的命令，利用它可以显示被调试的语言中任何有效的表达式。表达式除了包含你程序中的变量外，还可以包含函数调用，复杂数据结构(以及里面的元素，如：<code>s-&gt;data</code>)和历史等等。</p></blockquote><p><strong><code>print</code> 支持指定不同格式进行打印</strong></p><pre><code>(gdb) print /x var</code></pre><p><code>print</code> 可以指定显示的格式，这里用 <code>/x</code> 表示 16 进制的格式。</p><blockquote><p>可以支持的变量显示格式有：  <br>x  按十六进制格式显示变量。    <br>d  按十进制格式显示变量。  <br>u  按十六进制格式显示无符号整型。  <br>o  按八进制格式显示变量。  <br>t  按二进制格式显示变量。  <br>a  按十六进制格式显示变量。  <br>c  按字符格式显示变量。  <br>f  按浮点数格式显示变量。</p></blockquote><p><strong>6. 查看变量类型</strong></p><pre><code>(gdb) ptype 变量名</code></pre><p><code>ptype</code> 会打印变量详细的数据结构（比如：struct）。</p><p>如果只想知道类型不需要详细结构，可以使用 <code>whatis 变量名</code>。</p><p><strong>7. 设置变量的值</strong></p><pre><code>(gdb) set variable 变量名=值</code></pre><p>可简写为：<code>set var 变量名=值</code></p><p><strong>8. info 查看栈、内存等等信息</strong></p><p>查看方式： <code>info 信息名称</code>，如： info stack</p><pre><code>(gdb) info 
+address                    display                    macros                     sharedlibrary              tracepoints
+all-registers              extensions                 mem                        signals                    tvariables
+args                       files                      os                         skip                       type-printers
+auto-load                  float                      pretty-printer             source                     types
+auxv                       frame                      probes                     sources                    variables
+bookmarks                  frame-filter               proc                       stack                      vector
+breakpoints                functions                  program                    static-tracepoint-markers  vtbl
+checkpoints                handle                     record                     symbol                     warranty
+classes                    inferiors                  registers                  target                     watchpoints
+common                     line                       scope                      tasks                      win
+copying                    locals                     selectors                  terminal                   
+dcache                     macro                      set                        threads 
+</code></pre><h2>0x05 其他操作</h2><p><strong>1. 终止一个正在调试的程序</strong></p><pre><code>(gdb) kill</code></pre><p>输入 <code>kill</code> 就会终止正在调试的程序。</p><blockquote><p>备注： 也可以是 <code>quit</code>（简写 <code>q</code>）。</p></blockquote></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>

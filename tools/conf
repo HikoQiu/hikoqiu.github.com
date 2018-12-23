@@ -1,0 +1,38 @@
+#!/bin/sh
+
+## 博客配置
+BLOG_NAME="Hiko.im"
+BLOG_SLOGAN="LESS OR MORE"
+BLOG_NAME_ZH="贱志| Hiko.im"
+BLOG_SLOGAN_ZH="I'M ALWAYS HERE"
+BLOG_NAME_EN="HQ's Blog | Hiko.im"
+BLOG_SLOGAN_EN="YEP, A QUIET PLACE"
+
+DEFAULT_AUTHOR=贱志
+
+# 导航配置
+HEADER_NAV_ALL='全部/All:/,中文版:/index_zh.html,English:index_en.html'
+HEADER_NAV_ZH='首页:/index_zh.html,编程:/tech_zh.html,随笔:/daily_zh.html,关于:/posts/zh/2015/12/About_zh_daily.html'
+HEADER_NAV_EN='Home:/index_en.html,Programming:/tech_en.html,Daily Thoughts:/daily_en.html,About Me:/posts/en/2015/12/About_en_daily.html'
+
+# 分类, 与HEADER_NAV对应 # 以空格分隔, .会被替换成空格
+CATEGORIES="tech daily"
+CATEGORIES_LABELS_ZH="编程 随笔"
+CATEGORIES_LABELS_EN="Programing Daily.Thoughts"
+LANGS="en zh"
+
+# -- 分割线 --
+PHP=/usr/bin/php
+EDITOR=/Applications/MacDown.app/Contents/MacOS/MacDown
+
+##  HiBlog配置
+PATH_TOOL='./tools'
+PATH_LOG='./logs'
+PATH_POST_MD="./mds"
+PATH_MD_TPL='./tpls'
+PATH_HTML_TPL='./tpls'
+PATH_POST_HTML="./posts"
+PATH_ROOT="./"
+
+# the post created latest
+LATEST_FILE_NAME='latest.file.log'

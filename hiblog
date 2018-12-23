@@ -1,0 +1,173 @@
+#!/bin/sh
+
+## 配置文件
+. ./tools/conf
+
+## 当前脚本支持操作
+SUPPORT_OPS="
+--help
+index
+new
+parse
+del
+list
+edit
+"
+
+# 帮助信息
+HELP_CNT="
+    --help         查看帮助
+
+    index          索引文章,
+    new            新建文章. e.g: -t=标题 -c=分类(tech/daily, conf中配置) -a=作者(默认: Hiko) -l=语言(默认: zh, zh/en)
+    parse          解析指定文章(从 Markdown 到 HTML ). e.g: -f=md文件路径/all(全部)
+    list           列出所有 md 文件. e.g: -n=数量(默认: 10, 时间倒序)
+    edit           编辑某个 md 文件(根据list的结果的标号). e.g: -i=标号(如: #0)
+    del @TODO删除指定文章 e.g: -f=md 文件路径
+"
+
+## 解析当前操作
+if test $# -lt 1
+then
+    echo "$HELP_CNT"
+    exit;
+fi
+
+op=$1
+flag=false
+for tmp_op in $SUPPORT_OPS
+do
+    if [ "$op" == "$tmp_op" ]; then
+        flag=true
+        break
+    fi
+done
+
+if [ $flag == false ]; then
+    echo "
+    [Error] 不支持 $op 操作.
+
+    支持: $HELP_CNT
+    "
+    exit -1
+fi
+
+## 处理参数
+
+# 新建文章参数
+TITLE=
+CATEGORY=
+LANG=zh
+AUTHOR=$DEFAULT_AUTHOR
+
+# 解析单个文件参数
+FILENAME=
+
+# 编辑md文件
+MD_NUM=10
+
+# 通过标号获取md路径
+MD_INDEX=-1
+
+for option
+do
+    case "$option" in
+        -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+           *) value="" ;;
+    esac
+
+    case "$option" in
+        --help)
+            echo "$HELP_CNT"
+            exit 1
+            ;;
+
+        --all)
+            FILENAME="all"
+            ;;
+
+        -t=*)
+            TITLE="$value";
+            ;;
+
+        -c=*)
+            CATEGORY="$value";
+            ;;
+
+        -a=*)
+            AUTHOR="$value"
+            ;;
+
+        -l=*)
+            LANG="$value"
+            ;;
+
+       -f=*)
+            FILENAME="$value"
+            ;;
+
+       #list
+       -n=*)
+            MD_NUM="$value"
+            ;;
+
+        -i=*)
+            MD_INDEX="$value"
+            ;;
+        *)
+            # 空操作
+        ;;
+    esac
+done
+
+# 建索引
+if [ "$op" == "index" ]; then
+    . ./tools/index.sh
+
+# 解析单个文件
+elif [ "$op" == "parse" ]; then
+    if [ "$FILENAME" == "" ]; then
+        echo "[-] Error: 解析的文件名不能为空!"
+        exit -1
+    fi
+
+    if [ "$FILENAME" == "all" ]; then
+        . ./tools/parse_md.sh --all
+    else
+        . ./tools/parse_md.sh --file="$FILENAME"
+    fi
+
+# 新建文章
+elif [ "$op" == "new" ]; then
+    if [[ "$TITLE" == "" || "$CATEGORY" == "" ]]; then
+        echo "[-] Error: 新建文章缺少标题/分类!"
+        exit -1
+    fi
+
+    # 判断分类
+    flag=false
+    for tmp_cate in $CATEGORIES
+    do
+        if [ "$tmp_cate" == "$CATEGORY" ];then
+            flag=true
+            break
+        fi
+    done
+    if [ $flag == false ];then
+        echo "[-] Error: 文章分类错误! "
+        echo "[-] 可选分类[ " $CATEGORIES " ]"
+        exit -1
+    fi
+
+    . ./tools/post.sh --title="$TITLE" --category="$CATEGORY" --author="$AUTHOR" --lang="$LANG"
+
+# 列出所有文章
+elif [ "$op" == "list" ];then
+    . ./tools/list.sh --num=$MD_NUM
+
+# 编辑文章
+elif [ "$op" == "edit" ];then
+    . ./tools/edit.sh --index=$MD_INDEX
+fi
+
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>[TOOL] iptables命令集合 - Hiko.im</title>
+    <link rel="shortcut icon" href="../../../../resource/favicon.ico" type="image/x-icon" />
+    <!--HiBlog-[TOOL] iptables命令集合`Hiko`2016-09-23 15:14:24`iptables, Centos, 端口`tech`zh-HiBlog--><!-- meta data for index -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/normalize.css" media="screen">
+    <link rel='stylesheet' type='text/css' href='../../../../resource/stylesheets/google-css.css'>
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../../../../resource/stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-nav">
+    <div class="page-nav-list">
+        <a href='/index_zh.html'>首页</a><a href='/tech_zh.html'>编程</a><a href='/daily_zh.html'>随笔</a><a href='/posts/zh/2015/12/About_zh_daily.html'>关于</a>
+
+        <a href="/index_en.html" style="float: right;">英文版</a>
+        <a href="/index.html" style="float: right;">全部</a>
+    </div>
+</section>
+
+    <section class="page-header">
+        <h1 class="project-name">[TOOL] iptables命令集合</h1>
+        <h2 class="project-tagline">by Hiko / iptables, Centos, 端口</h2>
+    </section>
+
+    <section class="main-content">
+        <div><h2>配置 filter 表防火墙</h2><ul><li><p>清除预设表filter中的所有规则链的规则</p></li></ul><blockquote><p>iptables -F</p></blockquote><ul><li><p>清除预设表filter中使用者自定链中的规则</p></li></ul><blockquote><p>iptables -X</p></blockquote><ul><li><p>保存iptables配置</p></li></ul><blockquote><p>service iptables save</p></blockquote><ul><li><p>重启iptables服务</p></li></ul><blockquote><p>service iptables restart</p></blockquote><ul><li><p>查看iptables规则</p></li></ul><blockquote><p>iptables -Ln</p></blockquote><ul><li><p>查看iptables规则文件</p></li></ul><blockquote><p>cat /etc/sysconfig/iptables</p></blockquote><ul><li><p>设定预设规则<br>iptables -P INPUT DROP<br>iptables -P OUTPUT ACCEPT<br>iptables -P FORWARD DROP</p></li><li><p>开启22端口</p></li></ul><blockquote><p>iptables -A INPUT -p tcp --dport 22 -j ACCEPT</p></blockquote><p>如果OUTPUT设置成DROP需要添加 iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT</p><ul><li><p>关闭22端口</p></li></ul><blockquote><p>iptables -D INPUT -p tcp --dport 22 -j ACCEPT</p></blockquote><ul><li><p>开启常用端口<br>iptables -A INPUT -p tcp --dport 80 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 3306 -j ACCEPT<br>iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT<br>iptables -A OUTPUT -p tcp --sport 3306 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 20 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 21 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 10000 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 25 -j ACCEPT<br>iptables -A INPUT -p tcp --dport 110 -j ACCEPT<br>iptables -A INPUT -p udp --dport 53 -j ACCEPT</p></li><li><p>允许ping</p></li></ul><blockquote><p>iptables -A INPUT -p icmp -j ACCEPT</p></blockquote><p>如果OUTPUT设置成DROP需要添加</p><blockquote><p>iptables -A OUTPUT -p icmp -j ACCEPT</p></blockquote><ul><li><p>允许loopback</p></li></ul><blockquote><p>iptables -A INPUT -i lo -p all -j ACCEPT</p></blockquote><p>如果OUTPUT设置成DROP需要添加</p><blockquote><p>iptables -A OUTPUT -o lo -p all -j ACCEPT</p></blockquote><ul><li><p>屏蔽指定ip</p></li></ul><blockquote><p>iptables -A INPUT -p tcp -s 192.168.10.1 -j DROP</p></blockquote><ul><li><p>减少不安全的端口连接</p></li></ul><ol><li><p>-A OUTPUT -p tcp --sport 31337 -j DROP</p></li></ol><p>iptables -A OUTPUT -p tcp --dport 31337 -j DROP</p><ul><li><p>允许某个IP远程连接</p></li></ul><blockquote><p>iptables -A INPUT -s 192.168.10.1 -p tcp --dport 22 -j ACCEPT</p></blockquote><ul><li><p>允许某个网段的IP远程连接</p></li></ul><blockquote><p>iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j ACCEPT</p></blockquote><ul><li><p>允许指定网段通过、指定网口通过SSH连接本机</p></li></ul><blockquote><p>iptables -A INPUT -i eth0 -p tcp -s 192.168.10.0/24 --dport 22 -m state --state NEW,ESTABLESHED -j ACCEPT  <br>iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT  <br>iptables -A INPUT -i eth0 -p tcp -s 192.168.10.0/24 --dport 22 -m state --state ESTABLESHED -j ACCEPT  <br>iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state NEW,ESTABLISHED -j ACCEPT</p></blockquote><ul><li><p>开启转发功能</p></li></ul><blockquote><p>iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT  <br>iptables -A FORWARD -i eth1 -o eh0 -j ACCEPT</p></blockquote><ul><li><p>丢弃坏的TCP包</p></li></ul><ol><li><p>-A FORWARD -p TCP ! --syn -m state --state NEW -j DROP</p></li></ol><ul><li><p>处理IP碎片数量,防止攻击,允许每秒100个</p></li></ul><ol><li><p>-A FORWARD -f -m limit --limit 100/s --limit-burst 100 -j ACCEPT</p></li></ol><ul><li><p>设置ICMP包过滤,允许每秒1个包,限制触发条件是10个包</p></li></ul><ol><li><p>-A FORWARD -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT</p></li></ol><ul><li><p>丢弃非法连接</p></li></ul><ol><li><p>-A INPUT -m state --state INVALID -j DROP</p></li></ol><p>iptables -A OUTPUT -m state --state INVALID -j DROP<br>iptables -A FORWARD -m state --state INVALID -j DROP</p><ul><li><p>允许所有已经建立的和相关的连接</p></li></ul><ol><li><p>-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</p></li></ol><p>iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</p><h2>配置NAT表防火墙</h2><ul><li><p>查看NAT表规则</p></li></ul><ol><li><p>-t nat -L</p></li></ol><ul><li><p>清除NAT规则</p></li></ul><ol><li><p>-F -t nat</p></li></ol><p>iptables -X -t nat<br>iptables -Z -t nat</p><ul><li><p>防止外网用内网IP欺骗</p></li></ul><blockquote><p>iptables -t nat -A PREROUTING -i eth0 -s 10.0.0.0/8 -j DROP  <br>iptables -t nat -A PREROUTING -i eth0 -s 172.16.0.0/12 -j DROP  <br>iptables -t nat -A PREROUTING -i eth0 -s 192.168.0.0/16 -j DROP</p></blockquote><ul><li><p>禁止与某个IP的所有连接</p></li></ul><blockquote><p>iptables -t nat -A PREROUTING -d 192.168.10.1 -j DROP</p></blockquote><ul><li><p>禁用80端口</p></li></ul><blockquote><p>iptables -t nat -A PREROUTING -p tcp --dport 80 -j DROP</p></blockquote><ul><li><p>禁用某个IP的80端口</p></li></ul><blockquote><p>iptables -t nat -A PREROUTING -p tcp --dport 21 -d 192.168.10.1 -j DROP</p></blockquote><h2>保存iptables文件，重启服务</h2><ul><li><p>保存iptables规则</p></li></ul><blockquote><p>service iptables save</p></blockquote><ul><li><p>重启iptables服务</p></li></ul><blockquote><p>service iptables restart</p></blockquote></div>
+
+        <br/>
+        <br/>
+
+        <!--Disqus-->
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+            * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+            * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+            */
+            /*
+            var disqus_config = function () {
+            this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+            */
+            (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//hikoim.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <footer class="site-footer">
+    <span class="site-footer-credits">博客代码# <a href="https://github.com/HikoQiu/hikoqiu.github.com">hikoqiu.github.com</a>.</span>
+</footer>
+
+    </section>
+
+  </body>
+</html>
