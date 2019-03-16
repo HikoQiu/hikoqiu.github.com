@@ -50,7 +50,15 @@ lang: zh
 
 - 91年  
 - 潮州人  
-- 广州大学城 广东卖鱼卖猫大学
+- 广州大学城 广东外语外贸大学 网络工程专业
+
+#### 工作经历
+
+![Tencent](/resource/icons/tencent.png)
+![360](/resource/icons/360.png)
+![百度](/resource/icons/baidu.png)
+![UC](/resource/icons/uc.png)
+
 
 
 
